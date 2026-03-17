@@ -125,7 +125,7 @@ def run_subsample_heterogeneity(df, depvar, treatment, group_var, group_vals):
                 "nobs": res.nobs,
             })
         except Exception as e:
-            print(f"    ⚠ {group_var}={val}: {e}")
+            print(f"    [!] {group_var}={val}: {e}")
             results.append({
                 "group": val,
                 "coef": np.nan, "se": np.nan, "pval": np.nan,
@@ -150,11 +150,11 @@ def main():
         n_total = len(pt)
         print(f"\n  Pre-trends check: {n_pass}/{n_total} outcomes pasan (p > 0.10)")
         if n_pass == 0:
-            print("  ⚠ NINGÚN outcome pasa pre-trends → heterogeneidad no confiable.")
+            print("  [!] NINGÚN outcome pasa pre-trends --> heterogeneidad no confiable.")
             print("    Se procede de todos modos para documentación, pero los resultados")
             print("    deben interpretarse con extrema cautela.")
     else:
-        print("  ⚠ pretrends_tests.csv no encontrado — se procede sin verificación.")
+        print("  [!] pretrends_tests.csv no encontrado — se procede sin verificación.")
 
     df = load_panel()
     treatment = "alcaldesa_final"
@@ -243,7 +243,7 @@ def main():
     # CSV
     csv_path = OUT / "tabla_4_heterogeneidad.csv"
     tab.to_csv(csv_path)
-    print(f"\n  → CSV: {csv_path}")
+    print(f"\n  --> CSV: {csv_path}")
 
     # LaTeX
     tex_path = OUT / "tabla_4_heterogeneidad.tex"

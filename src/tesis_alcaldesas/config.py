@@ -4,7 +4,7 @@ tesis_alcaldesas.config — Configuración centralizada del proyecto.
 Provee:
   - Rutas canónicas (BASE_DIR, DATA_DIR, OUTPUT_DIR, …)
   - Rutas CSV para datos exportados de tesis_db
-  - get_engine() → SQLAlchemy Engine (legacy, opcional)
+  - get_engine() --> SQLAlchemy Engine (legacy, opcional)
   - Listas de outcomes, leakage y constantes reutilizables
 
 Nota (2026-03):

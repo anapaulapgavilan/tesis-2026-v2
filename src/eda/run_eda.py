@@ -9,7 +9,7 @@ Uso:
     python -m src.eda.run_eda          # desde la raíz del proyecto
     python src/eda/run_eda.py          # directo
 
-Outputs → outputs/eda/
+Outputs --> outputs/eda/
     ├── A_diccionario_observado.csv
     ├── B_calidad_integridad.csv
     ├── B_completitud_panel.csv
@@ -144,7 +144,7 @@ def seccion_a(df: pd.DataFrame) -> pd.DataFrame:
     for _, r in cat.iterrows():
         c = []
         if r["na_pct"] > 60:
-            c.append("⚠ >60% NA")
+            c.append("[!] >60% NA")
         if r["n_unique"] <= 1:
             c.append("constante")
         if r.get("cv") is not None and r["cv"] > 5:
@@ -155,7 +155,7 @@ def seccion_a(df: pd.DataFrame) -> pd.DataFrame:
     cat["comentario"] = comments
 
     _save_csv(cat, "A_diccionario_observado")
-    print(f"  → {len(cat)} variables perfiladas")
+    print(f"  --> {len(cat)} variables perfiladas")
     return cat
 
 
@@ -216,12 +216,12 @@ def seccion_b(df: pd.DataFrame) -> dict:
 
     # Tabla resumen de calidad
     quality = pd.DataFrame([
-        {"check": "Duplicados PK", "resultado": dup, "status": "✓" if dup == 0 else "✗"},
-        {"check": "Panel 100% balanceado", "resultado": str(panel["completo"].all()), "status": "✓" if panel["completo"].all() else "✗"},
-        {"check": "Municipios cambian estado", "resultado": inconsist_geo, "status": "✓" if inconsist_geo == 0 else "✗"},
-        {"check": "NULLs en tipo_pob", "resultado": tipo_na, "status": "⚠" if tipo_na > 0 else "✓"},
-        {"check": "Columnas con negativos", "resultado": len(neg_cols), "status": "✓" if len(neg_cols) == 0 else "✗"},
-        {"check": "Periodos cubiertos", "resultado": f"{periodos[0]}–{periodos[-1]} ({len(periodos)})", "status": "✓"},
+        {"check": "Duplicados PK", "resultado": dup, "status": "OK" if dup == 0 else "FAIL"},
+        {"check": "Panel 100% balanceado", "resultado": str(panel["completo"].all()), "status": "OK" if panel["completo"].all() else "FAIL"},
+        {"check": "Municipios cambian estado", "resultado": inconsist_geo, "status": "OK" if inconsist_geo == 0 else "FAIL"},
+        {"check": "NULLs en tipo_pob", "resultado": tipo_na, "status": "[!]" if tipo_na > 0 else "OK"},
+        {"check": "Columnas con negativos", "resultado": len(neg_cols), "status": "OK" if len(neg_cols) == 0 else "FAIL"},
+        {"check": "Periodos cubiertos", "resultado": f"{periodos[0]}–{periodos[-1]} ({len(periodos)})", "status": "OK"},
     ])
     _save_csv(quality, "B_calidad_integridad")
 
@@ -469,7 +469,7 @@ def seccion_e(df: pd.DataFrame) -> pd.DataFrame:
 
     checks = []
 
-    # E1. Adelantos (forwards) → usan información futura
+    # E1. Adelantos (forwards) --> usan información futura
     forward_cols = [c for c in df.columns if "_f1" in c or "_f2" in c or "_f3" in c]
     for c in forward_cols:
         checks.append({
@@ -511,7 +511,7 @@ def seccion_e(df: pd.DataFrame) -> pd.DataFrame:
         checks.append({
             "variable": c,
             "tipo_riesgo": "constante",
-            "razon": "Varianza = 0 → no aporta información.",
+            "razon": "Varianza = 0 --> no aporta información.",
             "accion": "EXCLUIR de regresiones"
         })
 
@@ -539,7 +539,7 @@ def seccion_e(df: pd.DataFrame) -> pd.DataFrame:
 
     leakage_df = pd.DataFrame(checks)
     _save_csv(leakage_df, "E_sesgo_leakage")
-    print(f"  → {len(checks)} variables con riesgo de sesgo/leakage identificadas")
+    print(f"  --> {len(checks)} variables con riesgo de sesgo/leakage identificadas")
 
     # Resumen por tipo
     if len(leakage_df) > 0:
@@ -660,7 +660,7 @@ def seccion_f(df: pd.DataFrame) -> pd.DataFrame:
 
     rec_df = pd.DataFrame(recs)
     _save_csv(rec_df, "F_recomendaciones")
-    print(f"  → {len(recs)} recomendaciones documentadas")
+    print(f"  --> {len(recs)} recomendaciones documentadas")
 
     return rec_df
 
@@ -672,13 +672,13 @@ def seccion_f(df: pd.DataFrame) -> pd.DataFrame:
 def main():
     print("=" * 70)
     print("EDA — Inclusión financiera y alcaldesas")
-    print(f"Outputs → {OUT}")
+    print(f"Outputs --> {OUT}")
     print("=" * 70)
 
     # ── Carga desde CSV ──────────────────────────────────────────────────────────
     print(f"\n⏳ Cargando CSV {TABLE}...")
     df = load_csv(TABLE)
-    print(f"✓ {df.shape[0]:,} filas × {df.shape[1]} columnas ({df.memory_usage(deep=True).sum()/1e6:.1f} MB)")
+    print(f"OK {df.shape[0]:,} filas × {df.shape[1]} columnas ({df.memory_usage(deep=True).sum()/1e6:.1f} MB)")
 
     # ── Ejecutar secciones ───────────────────────────────────────────────────
     catalogo   = seccion_a(df)
@@ -689,7 +689,7 @@ def main():
     recomend   = seccion_f(df)
 
     print("\n" + "=" * 70)
-    print("✓ EDA completado")
+    print("OK EDA completado")
     print(f"  Outputs en: {OUT}")
     print(f"  Archivos generados: {len(list(OUT.glob('*')))}")
     print("=" * 70)

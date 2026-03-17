@@ -13,7 +13,7 @@ with engine.connect() as conn:
     n = conn.execute(text("SELECT COUNT(*) FROM inclusion_financiera_clean")).scalar()
     ok = n == 41905
     results.append(ok)
-    print(f"Test 1 - Tabla existe ({n:,} filas): {'✓' if ok else '✗'}")
+    print(f"Test 1 - Tabla existe ({n:,} filas): {'OK' if ok else 'FAIL'}")
 
     # Test 2: Constant columns removed
     r = conn.execute(text(
@@ -24,7 +24,7 @@ with engine.connect() as conn:
     consts = [row[0] for row in r]
     ok = len(consts) == 0
     results.append(ok)
-    print(f"Test 2 - Constantes eliminadas ({len(consts)} restantes): {'✓' if ok else '✗'}")
+    print(f"Test 2 - Constantes eliminadas ({len(consts)} restantes): {'OK' if ok else 'FAIL'}")
 
     # Test 3: 51 per cápita columns
     npc = conn.execute(text(
@@ -33,7 +33,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = npc == 51
     results.append(ok)
-    print(f"Test 3 - Columnas per cápita ({npc}): {'✓' if ok else '✗'}")
+    print(f"Test 3 - Columnas per cápita ({npc}): {'OK' if ok else 'FAIL'}")
 
     # Test 4: No infinities
     ninf = conn.execute(text(
@@ -42,7 +42,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = ninf == 0
     results.append(ok)
-    print(f"Test 4 - Sin infinitos ({ninf}): {'✓' if ok else '✗'}")
+    print(f"Test 4 - Sin infinitos ({ninf}): {'OK' if ok else 'FAIL'}")
 
     # Test 5: No negatives
     nneg = conn.execute(text(
@@ -50,7 +50,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = nneg == 0
     results.append(ok)
-    print(f"Test 5 - Sin negativos ({nneg}): {'✓' if ok else '✗'}")
+    print(f"Test 5 - Sin negativos ({nneg}): {'OK' if ok else 'FAIL'}")
 
     # Test 6: Original table untouched
     norig = conn.execute(text(
@@ -58,7 +58,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = norig == 175
     results.append(ok)
-    print(f"Test 6 - Tabla original intacta ({norig} cols): {'✓' if ok else '✗'}")
+    print(f"Test 6 - Tabla original intacta ({norig} cols): {'OK' if ok else 'FAIL'}")
 
     # Test 7: PK has no duplicates
     ndups = conn.execute(text(
@@ -70,7 +70,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = ndups == 0
     results.append(ok)
-    print(f"Test 7 - PK sin duplicados ({ndups}): {'✓' if ok else '✗'}")
+    print(f"Test 7 - PK sin duplicados ({ndups}): {'OK' if ok else 'FAIL'}")
 
     # Test 8: Spot-check per cápita formula
     rows = conn.execute(text(
@@ -80,11 +80,11 @@ with engine.connect() as conn:
     )).fetchall()
     ok = all(abs(float(row[2]) - float(row[3])) < 0.01 for row in rows)
     results.append(ok)
-    print(f"Test 8 - Fórmula per cápita correcta: {'✓' if ok else '✗'}")
+    print(f"Test 8 - Fórmula per cápita correcta: {'OK' if ok else 'FAIL'}")
 
 print()
 if all(results):
-    print("=== ✓ Todas las pruebas de Recs Críticas PASARON ===")
+    print("=== OK Todas las pruebas de Recs Críticas PASARON ===")
 else:
     failed = sum(1 for r in results if not r)
-    print(f"=== ✗ {failed} prueba(s) FALLARON ===")
+    print(f"=== FAIL {failed} prueba(s) FALLARON ===")

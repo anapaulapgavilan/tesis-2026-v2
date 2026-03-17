@@ -218,7 +218,7 @@ def main():
     pt_df = pd.DataFrame(pretrend_rows)
     pt_path = OUT / "pretrends_tests_sens.csv"
     pt_df.to_csv(pt_path, index=False)
-    print(f"\n  → Pre-trends sensibilidad: {pt_path}")
+    print(f"\n  --> Pre-trends sensibilidad: {pt_path}")
 
     # --- Plot ---
     fig, axes = plt.subplots(len(FOCUS_OUTCOMES), len(VARIANTS),
@@ -266,7 +266,7 @@ def main():
     fig_path = OUT / "figura_2_event_study_sens.pdf"
     plot_save(fig, fig_path)
 
-    print("\n✓ Sensibilidad event study completada.")
+    print("\nOK Sensibilidad event study completada.")
 
 
 if __name__ == "__main__":

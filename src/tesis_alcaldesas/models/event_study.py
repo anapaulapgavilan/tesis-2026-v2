@@ -38,7 +38,7 @@ def build_event_dummies(df: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
     """
     Construye dummies de event_time con bins extremos.
     Excluye always-treated y never-treated de las dummies
-    (never-treated son el grupo de control implícito → dummies = 0).
+    (never-treated son el grupo de control implícito --> dummies = 0).
     """
     # Work on a copy
     df = df.copy()
@@ -256,7 +256,7 @@ def main():
     pt_df = pd.DataFrame(pretrend_rows)
     pt_path = OUT / "pretrends_tests.csv"
     pt_df.to_csv(pt_path, index=False)
-    print(f"\n  → Pre-trends tests: {pt_path}")
+    print(f"\n  --> Pre-trends tests: {pt_path}")
 
     # -------------------------------------------------------------------
     # Plot

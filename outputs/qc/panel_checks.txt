@@ -4,14 +4,14 @@ Panel Checks — 02_build_features.py
 Archivo: /Users/anapaulaperezgavilan/Documents/tesis-2026-v2/data/processed/analytical_panel.parquet
 Shape: 41,905 filas × 61 columnas
 
-PK (cve_mun, periodo_trimestre): ✓ única
+PK (cve_mun, periodo_trimestre): OK única
 
 Municipios: 2,471
 Periodos: 17
 N esperado (balanceado): 42,007
 N actual: 41,905
 Celdas faltantes: 102 (0.24%)
-Balanceado: ✗ NO
+Balanceado: FAIL NO
 
 Municipios con panel incompleto (8):
   cve_mun=2007: 1/17 periodos (16 faltantes)

@@ -71,13 +71,13 @@ def main():
                 capture_output=False,
             )
             elapsed = time.time() - t0
-            status = "✓" if proc.returncode == 0 else f"✗ (exit {proc.returncode})"
+            status = "OK" if proc.returncode == 0 else f"FAIL (exit {proc.returncode})"
         except Exception as e:
             elapsed = time.time() - t0
-            status = f"✗ ERROR: {e}"
+            status = f"FAIL ERROR: {e}"
 
         results.append((label, status, elapsed))
-        print(f"\n  → {status} ({elapsed:.1f}s)")
+        print(f"\n  --> {status} ({elapsed:.1f}s)")
 
     # --- Summary ---
     total_time = time.time() - t_total
@@ -88,7 +88,7 @@ def main():
     for label, status, elapsed in results:
         print(f"  {status:>5s}  {label:<50s} ({elapsed:.1f}s)")
 
-    n_ok = sum(1 for _, s, _ in results if s == "✓")
+    n_ok = sum(1 for _, s, _ in results if s == "OK")
     n_fail = len(results) - n_ok
     print(f"\n  {n_ok}/{len(results)} exitosos, {n_fail} fallidos")
 

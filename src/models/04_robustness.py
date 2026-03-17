@@ -95,7 +95,7 @@ def main():
     # R2. Winsor p1-p99
     # -------------------------------------------------------------------
     print("\n[R2] Winsor p1-p99 (asinh)")
-    # Winsorized _pc_w → apply asinh on top
+    # Winsorized _pc_w --> apply asinh on top
     wvar = f"{focus}_pc_w"
     if wvar in df.columns:
         df["_r2_y"] = np.arcsinh(df[wvar])
@@ -112,7 +112,7 @@ def main():
         print(f"  β={r2['coef']:.4f}{stars(r2['pval'])}  SE={r2['se']:.4f}")
         df.drop(columns=["_r2_y"], inplace=True)
     else:
-        print(f"  ⚠ {wvar} no encontrada — omitido")
+        print(f"  [!] {wvar} no encontrada — omitido")
 
     # -------------------------------------------------------------------
     # R3. Excluir transiciones
@@ -120,7 +120,7 @@ def main():
     print("\n[R3] Excluir transiciones (alcaldesa_excl_trans)")
     excl_col = "alcaldesa_excl_trans"
     if excl_col in df.columns:
-        # This variable has NaN in transition periods → they drop naturally
+        # This variable has NaN in transition periods --> they drop naturally
         r3 = run_robustness_twfe(df, f"{focus}_pc_asinh", excl_col)
         rows.append({
             "Test": "R3: Excluir transiciones",
@@ -129,11 +129,11 @@ def main():
             "Coef": coef_str(r3["coef"], r3["pval"]),
             "SE": se_str(r3["se"]),
             "N": f"{r3['nobs']:,}",
-            "Nota": "NaN en trimestres de transición → se excluyen",
+            "Nota": "NaN en trimestres de transición --> se excluyen",
         })
         print(f"  β={r3['coef']:.4f}{stars(r3['pval'])}  SE={r3['se']:.4f}  N={r3['nobs']:,}")
     else:
-        print(f"  ⚠ {excl_col} no encontrada — omitido")
+        print(f"  [!] {excl_col} no encontrada — omitido")
         rows.append({
             "Test": "R3: Excluir transiciones",
             "Outcome": focus_label,
@@ -191,7 +191,7 @@ def main():
         print(f"  β={r5['coef']:.4f}{stars(r5['pval'])}  SE={r5['se']:.4f}")
         df.drop(columns=["_r5_y_h_asinh"], inplace=True)
     else:
-        print(f"  ⚠ {h_pc_col} no encontrada")
+        print(f"  [!] {h_pc_col} no encontrada")
 
     # -------------------------------------------------------------------
     # Repeat baseline for all 5 outcomes (summary row)
@@ -216,7 +216,7 @@ def main():
     # CSV
     csv_path = OUT / "tabla_3_robustez.csv"
     tab.to_csv(csv_path)
-    print(f"\n  → CSV: {csv_path}")
+    print(f"\n  --> CSV: {csv_path}")
 
     # LaTeX
     tex_path = OUT / "tabla_3_robustez.tex"

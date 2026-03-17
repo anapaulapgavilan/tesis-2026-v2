@@ -16,5 +16,5 @@ Main sample: 41,871 obs, 2,463 municipios
 Municipios eliminados: 8
 
 Interpretación:
-  Si Δβ es pequeño relativo a SE → la exclusión es inocua.
+  Si Δβ es pequeño relativo a SE --> la exclusión es inocua.
   Ambas muestras producen la misma conclusión cualitativa.

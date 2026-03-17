@@ -42,7 +42,7 @@ def main():
         depvar = f"{out_name}_pc_asinh"
         label = OUTCOME_DEFS[out_name]["label"]
 
-        print(f"\n  Estimando: {depvar} ← {treatment} + log_pob + FE_mun + FE_t ...")
+        print(f"\n  Estimando: {depvar} <-- {treatment} + log_pob + FE_mun + FE_t ...")
 
         res = run_panel_ols(df, depvar=depvar, exog=exog)
 
@@ -97,7 +97,7 @@ def main():
     # CSV
     csv_path = OUT / "tabla_2_twfe.csv"
     tab.to_csv(csv_path)
-    print(f"\n  → CSV: {csv_path}")
+    print(f"\n  --> CSV: {csv_path}")
 
     # Raw CSV for downstream use
     raw_df = pd.DataFrame(raw_results)

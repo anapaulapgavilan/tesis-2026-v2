@@ -96,7 +96,7 @@ def main():
     # -------------------------------------------------------------------
     csv_path = OUT / "tabla_1_descriptiva.csv"
     tab.to_csv(csv_path)
-    print(f"\n  → CSV: {csv_path}")
+    print(f"\n  --> CSV: {csv_path}")
 
     # -------------------------------------------------------------------
     # Export LaTeX (formatted)

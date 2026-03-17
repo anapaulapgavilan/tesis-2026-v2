@@ -34,7 +34,7 @@ with engine.connect() as c:
         "FROM inclusion_financiera_clean) sub"
     )).scalar()
     pk_ok = n_pk == n_rows
-    print(f"PK única (cve_mun, periodo_trimestre): {n_pk:,} distintos → {'✓' if pk_ok else '✗ DUPLICADOS'}")
+    print(f"PK única (cve_mun, periodo_trimestre): {n_pk:,} distintos --> {'OK' if pk_ok else 'FAIL DUPLICADOS'}")
 
     # ── 4. Panel dimensions ──────────────────────────────────────────
     n_mun = c.execute(text("SELECT COUNT(DISTINCT cve_mun) FROM inclusion_financiera_clean")).scalar()
@@ -42,7 +42,7 @@ with engine.connect() as c:
     min_per = c.execute(text("SELECT MIN(periodo_trimestre) FROM inclusion_financiera_clean")).scalar()
     max_per = c.execute(text("SELECT MAX(periodo_trimestre) FROM inclusion_financiera_clean")).scalar()
     balanced = (n_mun * n_per == n_rows)
-    print(f"Municipios: {n_mun:,}  |  Periodos: {n_per} ({min_per} – {max_per})  |  Balanceado: {'✓' if balanced else '✗'}")
+    print(f"Municipios: {n_mun:,}  |  Periodos: {n_per} ({min_per} – {max_per})  |  Balanceado: {'OK' if balanced else 'FAIL'}")
 
     # ── 5. Treatment distribution ────────────────────────────────────
     treat = pd.read_sql(text("""
@@ -139,7 +139,7 @@ with engine.connect() as c:
     csv_path = os.path.join(OUT_DIR, "db_profile_summary.csv")
     profile_df = pd.DataFrame(profile_rows)
     profile_df.to_csv(csv_path, index=False)
-    print(f"\n✓ Perfil guardado en {csv_path} ({len(profile_rows)} filas)")
+    print(f"\nOK Perfil guardado en {csv_path} ({len(profile_rows)} filas)")
 
     # ── 10. Group columns for data contract ──────────────────────────
     def classify(col):
@@ -179,6 +179,6 @@ with engine.connect() as c:
                                           'transition', 'excl_trans'))]
     print(f"\n=== Columnas leakage/forward ({len(leakage)}) ===")
     for col in leakage:
-        print(f"  ⚠ {col}")
+        print(f"  [!] {col}")
 
-    print("\n✓ Discovery completo.")
+    print("\nOK Discovery completo.")

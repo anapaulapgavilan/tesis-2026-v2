@@ -9,7 +9,7 @@ Tests:
   R5. Placebo de género (outcomes masculinos, misma escala)
   R6. Escala alternativa: winsorizada en nivel (_pc_w, sin asinh)
   R7. Escala alternativa: per cápita cruda en nivel (_pc, sin transformación)
-  R8. Absorbing-only: solo switchers con tratamiento 0→1 permanente
+  R8. Absorbing-only: solo switchers con tratamiento 0-->1 permanente
 
 Outputs:
   outputs/paper/tabla_3_robustez.csv
@@ -94,7 +94,7 @@ def main():
     # R2. Winsor p1-p99
     # -------------------------------------------------------------------
     print("\n[R2] Winsor p1-p99 (asinh)")
-    # Winsorized _pc_w → apply asinh on top
+    # Winsorized _pc_w --> apply asinh on top
     wvar = f"{focus}_pc_w"
     if wvar in df.columns:
         df["_r2_y"] = np.arcsinh(df[wvar])
@@ -111,7 +111,7 @@ def main():
         print(f"  β={r2['coef']:.4f}{stars(r2['pval'])}  SE={r2['se']:.4f}")
         df.drop(columns=["_r2_y"], inplace=True)
     else:
-        print(f"  ⚠ {wvar} no encontrada — omitido")
+        print(f"  [!] {wvar} no encontrada — omitido")
 
     # -------------------------------------------------------------------
     # R3. Excluir transiciones
@@ -119,7 +119,7 @@ def main():
     print("\n[R3] Excluir transiciones (alcaldesa_excl_trans)")
     excl_col = "alcaldesa_excl_trans"
     if excl_col in df.columns:
-        # This variable has NaN in transition periods → they drop naturally
+        # This variable has NaN in transition periods --> they drop naturally
         r3 = run_robustness_twfe(df, f"{focus}_pc_asinh", excl_col)
         rows.append({
             "Test": "R3: Excluir transiciones",
@@ -128,11 +128,11 @@ def main():
             "Coef": coef_str(r3["coef"], r3["pval"]),
             "SE": se_str(r3["se"]),
             "N": f"{r3['nobs']:,}",
-            "Nota": "NaN en trimestres de transición → se excluyen",
+            "Nota": "NaN en trimestres de transición --> se excluyen",
         })
         print(f"  β={r3['coef']:.4f}{stars(r3['pval'])}  SE={r3['se']:.4f}  N={r3['nobs']:,}")
     else:
-        print(f"  ⚠ {excl_col} no encontrada — omitido")
+        print(f"  [!] {excl_col} no encontrada — omitido")
         rows.append({
             "Test": "R3: Excluir transiciones",
             "Outcome": focus_label,
@@ -190,7 +190,7 @@ def main():
         print(f"  β={r5['coef']:.4f}{stars(r5['pval'])}  SE={r5['se']:.4f}")
         df.drop(columns=["_r5_y_h_asinh"], inplace=True)
     else:
-        print(f"  ⚠ {h_pc_col} no encontrada")
+        print(f"  [!] {h_pc_col} no encontrada")
 
     # -------------------------------------------------------------------
     # R6. Winsorizada en nivel (sin asinh)
@@ -210,7 +210,7 @@ def main():
         })
         print(f"  β={r6['coef']:.4f}{stars(r6['pval'])}  SE={r6['se']:.4f}")
     else:
-        print(f"  ⚠ {wvar6} no encontrada — omitido")
+        print(f"  [!] {wvar6} no encontrada — omitido")
 
     # -------------------------------------------------------------------
     # R7. Per cápita cruda en nivel (sin ninguna transformación)
@@ -230,7 +230,7 @@ def main():
         })
         print(f"  β={r7['coef']:.4f}{stars(r7['pval'])}  SE={r7['se']:.4f}")
     else:
-        print(f"  ⚠ {pcvar7} no encontrada — omitido")
+        print(f"  [!] {pcvar7} no encontrada — omitido")
 
     # -------------------------------------------------------------------
     # R6 & R7 for all 5 outcomes (summary)
@@ -252,9 +252,9 @@ def main():
                 print(f"  R7 {lbl:25s}: β={r7_i['coef']:+.4f}{stars(r7_i['pval'])}")
 
     # -------------------------------------------------------------------
-    # R8. Absorbing-only: restrict to switchers with clean 0→1 treatment
+    # R8. Absorbing-only: restrict to switchers with clean 0-->1 treatment
     # -------------------------------------------------------------------
-    print("\n[R8] Absorbing-only: solo switchers 0→1 permanente + never-treated")
+    print("\n[R8] Absorbing-only: solo switchers 0-->1 permanente + never-treated")
     df_flat = df.reset_index()
     sw = df_flat[df_flat["cohort_type"] == "switcher"]
     absorbing_muns = set()
@@ -279,7 +279,7 @@ def main():
 
     r8 = run_robustness_twfe(df_r8, f"{focus}_pc_asinh", "alcaldesa_final")
     rows.append({
-        "Test": "R8: Absorbing-only (0→1 perm.)",
+        "Test": "R8: Absorbing-only (0-->1 perm.)",
         "Outcome": focus_label,
         "Treatment": "alcaldesa\\_final",
         "Coef": coef_str(r8["coef"], r8["pval"]),
@@ -321,7 +321,7 @@ def main():
     # CSV
     csv_path = OUT / "tabla_3_robustez.csv"
     tab.to_csv(csv_path)
-    print(f"\n  → CSV: {csv_path}")
+    print(f"\n  --> CSV: {csv_path}")
 
     # LaTeX
     tex_path = OUT / "tabla_3_robustez.tex"
@@ -338,7 +338,7 @@ def main():
              "R5: same spec, outcome masculino (placebo de género). "
              "R6: per cápita winsorizado p1-p99 en nivel (sin asinh). "
              "R7: per cápita crudo en nivel (sin transformación). "
-             "R8: solo switchers absorbentes (0→1 permanente) + never-treated. "
+             "R8: solo switchers absorbentes (0-->1 permanente) + never-treated. "
              "*** p<0.01, ** p<0.05, * p<0.10.",
     )
 

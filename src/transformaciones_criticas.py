@@ -44,10 +44,10 @@ COLS_CONSTANTES = [
 ]
 
 # ── Mapping de sufijo demográfico a denominador per cápita ───────────────────
-# _m  → mujeres    → pob_adulta_m
-# _h  → hombres    → pob_adulta_h
-# _pm → persona moral (empresas) → no tiene denominador poblacional
-# _t  → total      → pob_adulta
+# _m  --> mujeres    --> pob_adulta_m
+# _h  --> hombres    --> pob_adulta_h
+# _pm --> persona moral (empresas) --> no tiene denominador poblacional
+# _t  --> total      --> pob_adulta
 SUFIJO_A_DENOM = {
     "_m":  "pob_adulta_m",
     "_h":  "pob_adulta_h",
@@ -125,9 +125,9 @@ def aplicar_per_capita(df, pares):
         else:
             conteos_creados += 1
 
-    print(f"  ✓ Columnas de conteos per cápita creadas: {conteos_creados}")
-    print(f"  ✓ Columnas de saldos per cápita creadas:  {saldos_creados}")
-    print(f"  ✓ Total columnas per cápita nuevas:       {conteos_creados + saldos_creados}")
+    print(f"  OK Columnas de conteos per cápita creadas: {conteos_creados}")
+    print(f"  OK Columnas de saldos per cápita creadas:  {saldos_creados}")
+    print(f"  OK Total columnas per cápita nuevas:       {conteos_creados + saldos_creados}")
 
     return df
 
@@ -158,7 +158,7 @@ def documentar_saldoprom_nulls(df):
         if n_null > 0:
             print(f"  {col:<35} {n_null:>8,} {pct_null:>7.1f}%")
 
-    print(f"\n  → ACCIÓN: NO se imputan. Los flags `flag_undef_saldoprom_*` ya")
+    print(f"\n  --> ACCIÓN: NO se imputan. Los flags `flag_undef_saldoprom_*` ya")
     print(f"    existen en la tabla para filtrar. Usar flag = 0 para análisis")
     print(f"    de margen intensivo (solo donde hay contratos).")
 
@@ -179,14 +179,14 @@ def excluir_constantes(df):
     cols_ausentes  = [c for c in COLS_CONSTANTES if c not in df.columns]
 
     if cols_ausentes:
-        print(f"  ⚠ Columnas no encontradas (ya eliminadas?): {cols_ausentes}")
+        print(f"  [!] Columnas no encontradas (ya eliminadas?): {cols_ausentes}")
 
     for col in cols_presentes:
         val_unico = df[col].dropna().unique()
-        print(f"  → Eliminando '{col}' (valor constante: {val_unico})")
+        print(f"  --> Eliminando '{col}' (valor constante: {val_unico})")
 
     df = df.drop(columns=cols_presentes, errors="ignore")
-    print(f"  ✓ Columnas eliminadas: {len(cols_presentes)}")
+    print(f"  OK Columnas eliminadas: {len(cols_presentes)}")
 
     return df
 
@@ -202,20 +202,20 @@ def validar_transformaciones(df, pares):
 
     # 1. Verificar que las columnas constantes fueron eliminadas
     constantes_restantes = [c for c in COLS_CONSTANTES if c in df.columns]
-    status1 = "✓" if len(constantes_restantes) == 0 else "✗"
+    status1 = "OK" if len(constantes_restantes) == 0 else "FAIL"
     print(f"  {status1} Constantes eliminadas: {len(constantes_restantes) == 0}")
 
     # 2. Verificar que las columnas per cápita existen
     cols_pc = [col_pc for _, col_pc, _ in pares]
     existentes = [c for c in cols_pc if c in df.columns]
-    status2 = "✓" if len(existentes) == len(cols_pc) else "✗"
+    status2 = "OK" if len(existentes) == len(cols_pc) else "FAIL"
     print(f"  {status2} Columnas per cápita creadas: {len(existentes)}/{len(cols_pc)}")
 
     # 3. Verificar que las columnas per cápita no tienen infinitos
     n_inf = 0
     for c in existentes:
         n_inf += np.isinf(df[c]).sum() if df[c].dtype != "object" else 0
-    status3 = "✓" if n_inf == 0 else "✗"
+    status3 = "OK" if n_inf == 0 else "FAIL"
     print(f"  {status3} Valores infinitos en per cápita: {n_inf}")
 
     # 4. Verificar que no hay negativos en per cápita
@@ -223,7 +223,7 @@ def validar_transformaciones(df, pares):
     for c in existentes:
         if pd.api.types.is_numeric_dtype(df[c]):
             n_neg += (df[c] < 0).sum()
-    status4 = "✓" if n_neg == 0 else "✗"
+    status4 = "OK" if n_neg == 0 else "FAIL"
     print(f"  {status4} Valores negativos en per cápita: {n_neg}")
 
     # 5. Mostrar estadísticas descriptivas de algunas columnas per cápita clave
@@ -253,13 +253,13 @@ def main():
     # ── 1. Cargar datos originales ──
     print("\n1. Cargando datos desde inclusion_financiera...")
     df = pd.read_sql("SELECT * FROM inclusion_financiera", engine)
-    print(f"   ✓ {df.shape[0]:,} filas × {df.shape[1]} columnas cargadas")
+    print(f"   OK {df.shape[0]:,} filas × {df.shape[1]} columnas cargadas")
     n_cols_original = df.shape[1]
 
     # ── 2. Identificar columnas para per cápita ──
     print("\n2. Identificando columnas para normalización per cápita...")
     pares = identificar_columnas_per_capita(df)
-    print(f"   ✓ {len(pares)} columnas identificadas para normalización")
+    print(f"   OK {len(pares)} columnas identificadas para normalización")
 
     # ── 3. Aplicar normalización per cápita (Recs 1 y 2) ──
     print("\n3. Aplicando normalización per cápita...")
@@ -302,8 +302,8 @@ def main():
             PRIMARY KEY (cve_mun, periodo_trimestre)
         """))
 
-    print(f"   ✓ Tabla 'inclusion_financiera_clean' creada exitosamente")
-    print(f"   ✓ Llave primaria (cve_mun, periodo_trimestre) agregada")
+    print(f"   OK Tabla 'inclusion_financiera_clean' creada exitosamente")
+    print(f"   OK Llave primaria (cve_mun, periodo_trimestre) agregada")
 
     # ── 8. Resumen final ──
     print(f"\n{'='*70}")

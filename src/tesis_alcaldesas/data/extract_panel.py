@@ -144,13 +144,13 @@ def main():
     # Validar columnas
     missing = validate_columns(csv_cols, ALL_COLS)
     if missing:
-        print(f"\n⚠  COLUMNAS FALTANTES ({len(missing)}):")
+        print(f"\n[!]  COLUMNAS FALTANTES ({len(missing)}):")
         for m in missing:
             print(f"   - {m}")
         print("\nSe procede sin ellas.\n")
         cols_to_extract = [c for c in ALL_COLS if c not in set(missing)]
     else:
-        print(f"\n✓  Todas las {len(ALL_COLS)} columnas encontradas en la tabla.\n")
+        print(f"\nOK  Todas las {len(ALL_COLS)} columnas encontradas en la tabla.\n")
         cols_to_extract = ALL_COLS
 
     # Extraer desde CSV
@@ -165,16 +165,16 @@ def main():
     print(f"  Municipios: {n_mun:,}")
     print(f"  Periodos: {n_per}")
     pk_unique = df.duplicated(subset=["cve_mun", "periodo_trimestre"]).sum() == 0
-    print(f"  PK única: {'✓' if pk_unique else '✗ HAY DUPLICADOS'}")
+    print(f"  PK única: {'OK' if pk_unique else 'FAIL HAY DUPLICADOS'}")
 
     # Exportar parquet
     out_path = DATA_DIR / "analytical_panel.parquet"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(out_path, index=False, engine="pyarrow")
-    print(f"\n✓  Exportado → {out_path}  ({out_path.stat().st_size / 1e6:.1f} MB)")
+    print(f"\nOK  Exportado --> {out_path}  ({out_path.stat().st_size / 1e6:.1f} MB)")
 
     if missing:
-        print(f"\n⚠  Recordatorio: {len(missing)} columna(s) faltante(s) — ver arriba.")
+        print(f"\n[!]  Recordatorio: {len(missing)} columna(s) faltante(s) — ver arriba.")
         sys.exit(1)
 
     print("\nDone.")

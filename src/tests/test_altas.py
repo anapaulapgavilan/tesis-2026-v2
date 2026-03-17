@@ -15,7 +15,7 @@ with engine.connect() as conn:
     n_rows = conn.execute(text("SELECT COUNT(*) FROM inclusion_financiera_clean")).scalar()
     ok = n_rows == 41905
     results.append(ok)
-    print(f"T1 - Filas correctas ({n_rows:,}): {'✓' if ok else '✗'}")
+    print(f"T1 - Filas correctas ({n_rows:,}): {'OK' if ok else 'FAIL'}")
 
     n_cols = conn.execute(text(
         "SELECT COUNT(*) FROM information_schema.columns "
@@ -23,7 +23,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = n_cols >= 295  # 223 base + 4 log + 51 winsor + 17 ratio + 1 ever = 296
     results.append(ok)
-    print(f"T2 - Total columnas ({n_cols}): {'✓' if ok else '✗'}")
+    print(f"T2 - Total columnas ({n_cols}): {'OK' if ok else 'FAIL'}")
 
     # ── Rec 5: log(población) ─────────────────────────────────────────
     log_cols = ["log_pob", "log_pob_adulta", "log_pob_adulta_m", "log_pob_adulta_h"]
@@ -34,7 +34,7 @@ with engine.connect() as conn:
         )).scalar()
         ok = exists == 1
         results.append(ok)
-    print(f"T3 - 4 log cols existen: {'✓' if all(results[-4:]) else '✗'}")
+    print(f"T3 - 4 log cols existen: {'OK' if all(results[-4:]) else 'FAIL'}")
 
     # Verificar que log es correcto: log_pob ≈ ln(pob + 1)
     row = conn.execute(text(
@@ -43,7 +43,7 @@ with engine.connect() as conn:
     )).fetchone()
     ok = abs(float(row[1]) - float(row[2])) < 0.001
     results.append(ok)
-    print(f"T4 - log_pob = ln(pob+1): {'✓' if ok else '✗'}")
+    print(f"T4 - log_pob = ln(pob+1): {'OK' if ok else 'FAIL'}")
 
     # Stats for log
     r = conn.execute(text(
@@ -59,7 +59,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = n_w == 51
     results.append(ok)
-    print(f"T5 - Cols winsorizadas ({n_w}): {'✓' if ok else '✗'}")
+    print(f"T5 - Cols winsorizadas ({n_w}): {'OK' if ok else 'FAIL'}")
 
     # Verificar que winsorizado ≤ original max y ≥ original min
     r = conn.execute(text(
@@ -68,7 +68,7 @@ with engine.connect() as conn:
     )).fetchone()
     ok = float(r[0]) <= float(r[1])
     results.append(ok)
-    print(f"T6 - Winsorizado ≤ original max: {'✓' if ok else '✗'}")
+    print(f"T6 - Winsorizado ≤ original max: {'OK' if ok else 'FAIL'}")
     data["winsor_ejemplo"] = {"max_w": round(float(r[0]), 2), "max_orig": round(float(r[1]), 2)}
 
     # ── Rec 7: Ratios M/H ────────────────────────────────────────────
@@ -78,7 +78,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = n_ratio == 17
     results.append(ok)
-    print(f"T7 - Ratios M/H ({n_ratio}): {'✓' if ok else '✗'}")
+    print(f"T7 - Ratios M/H ({n_ratio}): {'OK' if ok else 'FAIL'}")
 
     # Verificar fórmula: ratio = m_pc / h_pc
     r = conn.execute(text(
@@ -89,7 +89,7 @@ with engine.connect() as conn:
     )).fetchall()
     ok = all(abs(float(row[2]) - float(row[3])) < 0.001 for row in r)
     results.append(ok)
-    print(f"T8 - Fórmula ratio correcta: {'✓' if ok else '✗'}")
+    print(f"T8 - Fórmula ratio correcta: {'OK' if ok else 'FAIL'}")
 
     # Key ratio stats
     r = conn.execute(text(
@@ -107,7 +107,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = exists == 1
     results.append(ok)
-    print(f"T9 - ever_alcaldesa existe: {'✓' if ok else '✗'}")
+    print(f"T9 - ever_alcaldesa existe: {'OK' if ok else 'FAIL'}")
 
     # Count
     r = conn.execute(text(
@@ -119,7 +119,7 @@ with engine.connect() as conn:
     n_never = data["ever_alcaldesa"].get("0", 0)
     ok = n_ever + n_never == 2471
     results.append(ok)
-    print(f"T10 - ever_alcaldesa totales ({n_ever + n_never}): {'✓' if ok else '✗'}")
+    print(f"T10 - ever_alcaldesa totales ({n_ever + n_never}): {'OK' if ok else 'FAIL'}")
     print(f"    ever=1: {n_ever} mun ({n_ever/(n_ever+n_never)*100:.1f}%)")
     print(f"    ever=0: {n_never} mun ({n_never/(n_ever+n_never)*100:.1f}%)")
 
@@ -131,7 +131,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = bad == 0
     results.append(ok)
-    print(f"T11 - ever_alcaldesa consistente: {'✓' if ok else '✗'}")
+    print(f"T11 - ever_alcaldesa consistente: {'OK' if ok else 'FAIL'}")
 
     # ── Rec 9: cvegeo_mun index ───────────────────────────────────────
     idx = conn.execute(text(
@@ -140,7 +140,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = idx >= 1
     results.append(ok)
-    print(f"T12 - Índice cvegeo_mun existe: {'✓' if ok else '✗'}")
+    print(f"T12 - Índice cvegeo_mun existe: {'OK' if ok else 'FAIL'}")
 
     # No NULLs in cvegeo_mun
     n_null = conn.execute(text(
@@ -148,7 +148,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = n_null == 0
     results.append(ok)
-    print(f"T13 - cvegeo_mun sin NULLs: {'✓' if ok else '✗'}")
+    print(f"T13 - cvegeo_mun sin NULLs: {'OK' if ok else 'FAIL'}")
 
     # All 5 digits
     bad_len = conn.execute(text(
@@ -156,7 +156,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = bad_len == 0
     results.append(ok)
-    print(f"T14 - cvegeo_mun 5 dígitos: {'✓' if ok else '✗'}")
+    print(f"T14 - cvegeo_mun 5 dígitos: {'OK' if ok else 'FAIL'}")
 
     # ── PK intact ─────────────────────────────────────────────────────
     pk = conn.execute(text(
@@ -165,7 +165,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = pk >= 1
     results.append(ok)
-    print(f"T15 - PK intacta: {'✓' if ok else '✗'}")
+    print(f"T15 - PK intacta: {'OK' if ok else 'FAIL'}")
 
     # ── Original table untouched ──────────────────────────────────────
     n_orig = conn.execute(text(
@@ -173,16 +173,16 @@ with engine.connect() as conn:
     )).scalar()
     ok = n_orig == 175
     results.append(ok)
-    print(f"T16 - Tabla original intacta ({n_orig} cols): {'✓' if ok else '✗'}")
+    print(f"T16 - Tabla original intacta ({n_orig} cols): {'OK' if ok else 'FAIL'}")
 
 print()
 passed = sum(results)
 total = len(results)
 if all(results):
-    print(f"=== ✓ Todas las {total} pruebas de Recs Altas PASARON ===")
+    print(f"=== OK Todas las {total} pruebas de Recs Altas PASARON ===")
 else:
     failed = total - passed
-    print(f"=== ✗ {failed}/{total} prueba(s) FALLARON ===")
+    print(f"=== FAIL {failed}/{total} prueba(s) FALLARON ===")
 
 # Save stats for documentation
 print(f"\nEstadísticas recopiladas: {json.dumps(data, indent=2)}")

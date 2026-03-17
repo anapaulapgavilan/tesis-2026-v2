@@ -94,7 +94,7 @@ def main():
         # Reset index to check
         df_check = df.reset_index()
         if "flag_incomplete_panel" not in df_check.columns:
-            print("  ⚠ flag_incomplete_panel no encontrado. "
+            print("  [!] flag_incomplete_panel no encontrado. "
                   "Usando full sample como main.")
             # Create a dummy flag (all 0)
             df["flag_incomplete_panel"] = 0
@@ -173,15 +173,15 @@ def main():
         f"Municipios eliminados: {n_dropped}",
         "",
         "Interpretación:",
-        "  Si Δβ es pequeño relativo a SE → la exclusión es inocua.",
+        "  Si Δβ es pequeño relativo a SE --> la exclusión es inocua.",
         "  Ambas muestras producen la misma conclusión cualitativa.",
     ]
 
     sens_path = OUT / "sample_sensitivity.txt"
     sens_path.write_text("\n".join(lines), encoding="utf-8")
-    print(f"\n  → Sensibilidad: {sens_path}")
+    print(f"\n  --> Sensibilidad: {sens_path}")
 
-    print("\n✓ Sample policy completado.")
+    print("\nOK Sample policy completado.")
 
 
 if __name__ == "__main__":

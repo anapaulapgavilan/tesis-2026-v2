@@ -90,7 +90,7 @@ def main():
     for raw_col, label in EXTENSIVE_DEFS.items():
         depvar = f"any_{raw_col}"
         if depvar not in df.columns:
-            print(f"  ⚠ {depvar} no disponible — omitido.")
+            print(f"  [!] {depvar} no disponible — omitido.")
             continue
 
         # Summary stats
@@ -125,7 +125,7 @@ def main():
     for base, label in SHARE_DEFS.items():
         depvar = f"share_m_{base}"
         if depvar not in df.columns:
-            print(f"  ⚠ {depvar} no disponible — omitido.")
+            print(f"  [!] {depvar} no disponible — omitido.")
             continue
 
         mean_dep = df[depvar].mean()
@@ -159,7 +159,7 @@ def main():
 
     csv_path = OUT / "tabla_7_extensive.csv"
     result_df.to_csv(csv_path, index=False)
-    print(f"\n  → CSV: {csv_path}")
+    print(f"\n  --> CSV: {csv_path}")
 
     # TeX table
     tex_df = result_df[["Panel", "Outcome", "Coef", "SE", "p-valor", "N"]].copy()
@@ -175,7 +175,7 @@ def main():
              "Extensión exploratoria pre-especificada.",
     )
 
-    print("\n✓ Extensión outcomes completada.")
+    print("\nOK Extensión outcomes completada.")
 
 
 if __name__ == "__main__":

@@ -57,7 +57,7 @@ def load_and_validate(path: Path) -> tuple[pd.DataFrame, list[str]]:
     # --- PK ---
     pk_cols = ["cve_mun", "periodo_trimestre"]
     n_dup = df.duplicated(subset=pk_cols).sum()
-    log.append(f"\nPK ({', '.join(pk_cols)}): {'✓ única' if n_dup == 0 else f'✗ {n_dup} duplicados'}")
+    log.append(f"\nPK ({', '.join(pk_cols)}): {'OK única' if n_dup == 0 else f'FAIL {n_dup} duplicados'}")
 
     # --- Panel dimensions ---
     n_mun = df["cve_mun"].nunique()
@@ -71,7 +71,7 @@ def load_and_validate(path: Path) -> tuple[pd.DataFrame, list[str]]:
     log.append(f"N esperado (balanceado): {n_expected:,}")
     log.append(f"N actual: {n_actual:,}")
     log.append(f"Celdas faltantes: {n_expected - n_actual:,} ({(n_expected - n_actual) / n_expected * 100:.2f}%)")
-    log.append(f"Balanceado: {'✓' if balanced else '✗ NO'}")
+    log.append(f"Balanceado: {'OK' if balanced else 'FAIL NO'}")
 
     # --- Municipios incompletos ---
     if not balanced:
@@ -106,10 +106,10 @@ def build_per_capita(df: pd.DataFrame, outcomes: list[str], denom: str) -> pd.Da
     """Crea columnas _pc = 10000 * raw / denom."""
     for col in outcomes:
         if col not in df.columns:
-            print(f"  ⚠ columna {col} no encontrada — se omite.")
+            print(f"  [!] columna {col} no encontrada — se omite.")
             continue
         pc_col = f"{col}_pc"
-        # Usar np.where para manejar denominador=0 → NaN
+        # Usar np.where para manejar denominador=0 --> NaN
         df[pc_col] = np.where(
             df[denom] > 0,
             10_000 * df[col].astype(float) / df[denom].astype(float),
@@ -318,7 +318,7 @@ def main():
         f.write("Panel Checks — 02_build_features.py\n")
         f.write("=" * 50 + "\n\n")
         f.write("\n".join(log_lines))
-    print(f"\n  → Log guardado en {PANEL_LOG}")
+    print(f"\n  --> Log guardado en {PANEL_LOG}")
 
     # --- 2. Per cápita ---
     print("\n[2/6] Calculando outcomes per cápita (×10,000 mujeres adultas) …")
@@ -370,13 +370,13 @@ def main():
     type_summary = summary[summary["first_treat_period"] == "ALL"]
     for _, row in type_summary.iterrows():
         print(f"    {row['cohort_type']}: {row['n_municipios']:,} municipios")
-    print(f"\n  → Resumen guardado en {COHORT_CSV}")
+    print(f"\n  --> Resumen guardado en {COHORT_CSV}")
 
     # --- Exportar ---
     print(f"\nDataset final: {df.shape[0]:,} filas × {df.shape[1]} columnas")
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(OUTPUT, index=False, engine="pyarrow")
-    print(f"✓  Exportado → {OUTPUT}  ({OUTPUT.stat().st_size / 1e6:.1f} MB)")
+    print(f"OK  Exportado --> {OUTPUT}  ({OUTPUT.stat().st_size / 1e6:.1f} MB)")
 
     # Resumen de escalas por outcome primario
     print("\n" + "=" * 60)

@@ -29,6 +29,6 @@ Conclusión: los intervalos de confianza del TWFE ya son informativos
   nulo no es un vacío — es la ausencia de efectos de tamaño relevante.
 
 Fórmula: MDES = (z_{α/2} + z_{β}) × SE_TWFE
-  α = 0.05 bilateral → z = 1.96
-  poder = 0.80 → z_β = 0.84
+  α = 0.05 bilateral --> z = 1.96
+  poder = 0.80 --> z_β = 0.84
   Factor = 2.80

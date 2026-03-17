@@ -7,7 +7,7 @@ Convierte resultados nulos en hallazgos informativos:
 Para cada outcome primario:
   1. Obtener SE del coeficiente TWFE baseline (tabla_2_twfe_raw.csv)
   2. Calcular MDES = (z_alpha/2 + z_beta) × SE
-  3. Traducir asinh → % aproximado en niveles
+  3. Traducir asinh --> % aproximado en niveles
   4. Reportar al 80% poder (alpha 0.05 y 0.10)
 
 Outputs:
@@ -62,7 +62,7 @@ def main():
     # --- Load TWFE raw results ---
     twfe_path = OUT / "tabla_2_twfe_raw.csv"
     if not twfe_path.exists():
-        print(f"✗ No se encontró {twfe_path}")
+        print(f"FAIL No se encontró {twfe_path}")
         print("  Ejecuta primero: python -m tesis_alcaldesas.models.twfe")
         return
 
@@ -90,7 +90,7 @@ def main():
         pct_05_90 = asinh_to_pct(mdes_05_90)
 
         print(f"\n  {label} ({out_name}):")
-        print(f"    SE = {se:.4f}  |  β̂_TWFE = {coef:.4f}")
+        print(f"    SE = {se:.4f}  |  beta_hat_TWFE = {coef:.4f}")
         print(f"    MDES (α=0.05, 80%): {mdes_05_80:.4f} asinh ≈ {pct_05_80:.1f}%")
         print(f"    MDES (α=0.10, 80%): {mdes_10_80:.4f} asinh ≈ {pct_10_80:.1f}%")
         print(f"    MDES (α=0.05, 90%): {mdes_05_90:.4f} asinh ≈ {pct_05_90:.1f}%")
@@ -114,7 +114,7 @@ def main():
     # --- CSV ---
     csv_path = OUT / "tabla_6_mdes.csv"
     df.to_csv(csv_path, index=False)
-    print(f"\n  → CSV: {csv_path}")
+    print(f"\n  --> CSV: {csv_path}")
 
     # --- TeX table ---
     tex_df = pd.DataFrame({
@@ -146,7 +146,7 @@ def main():
         r"\end{table}",
     ]
     tex_path.write_text("\n".join(lines), encoding="utf-8")
-    print(f"  → TeX: {tex_path}")
+    print(f"  --> TeX: {tex_path}")
 
     # --- Summary text ---
     summary_lines = [
@@ -188,16 +188,16 @@ def main():
         "  nulo no es un vacío — es la ausencia de efectos de tamaño relevante.",
         "",
         "Fórmula: MDES = (z_{α/2} + z_{β}) × SE_TWFE",
-        "  α = 0.05 bilateral → z = 1.96",
-        "  poder = 0.80 → z_β = 0.84",
+        "  α = 0.05 bilateral --> z = 1.96",
+        "  poder = 0.80 --> z_β = 0.84",
         "  Factor = 2.80",
     ]
 
     summary_path = OUT / "mdes_summary.txt"
     summary_path.write_text("\n".join(summary_lines), encoding="utf-8")
-    print(f"  → Summary: {summary_path}")
+    print(f"  --> Summary: {summary_path}")
 
-    print("\n✓ MDES completado.")
+    print("\nOK MDES completado.")
 
 
 if __name__ == "__main__":

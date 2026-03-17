@@ -24,7 +24,7 @@ _DATA_DIR = Path(__file__).resolve().parent.parent / "data" if \
 
 TABLE = "inclusion_financiera"
 
-# Mapa de nombres lógicos → archivos CSV
+# Mapa de nombres lógicos --> archivos CSV
 _CSV_MAP: dict[str, Path] = {
     "inclusion_financiera":         _DATA_DIR / "inclusion_financiera.csv",
     "inclusion_financiera_clean":   _DATA_DIR / "inclusion_financiera_clean.csv",

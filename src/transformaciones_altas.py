@@ -64,10 +64,10 @@ def aplicar_log_poblacion(df):
     for col_orig, col_log in mapping.items():
         df[col_log] = np.log1p(df[col_orig]).round(6)
         media = df[col_log].mean()
-        print(f"  ✓ {col_log:<25} — media: {media:.4f}  "
+        print(f"  OK {col_log:<25} — media: {media:.4f}  "
               f"(rango: {df[col_log].min():.4f} – {df[col_log].max():.4f})")
 
-    print(f"\n  ✓ 4 columnas log de población creadas")
+    print(f"\n  OK 4 columnas log de población creadas")
     return df
 
 
@@ -104,7 +104,7 @@ def winsorizar_per_capita(df):
         p1 = df[col].quantile(0.01)
         p99 = df[col].quantile(0.99)
 
-        # Clipear: valores < p1 → p1, valores > p99 → p99
+        # Clipear: valores < p1 --> p1, valores > p99 --> p99
         df[col_w] = df[col].clip(lower=p1, upper=p99)
 
         # Contar cuántos valores fueron afectados
@@ -128,7 +128,7 @@ def winsorizar_per_capita(df):
     if len(stats) > 10:
         print(f"  ... ({len(stats) - 10} columnas más)")
 
-    print(f"\n  ✓ {len(cols_pc)} columnas winsorizadas creadas (sufijo _w)")
+    print(f"\n  OK {len(cols_pc)} columnas winsorizadas creadas (sufijo _w)")
     return df, stats
 
 
@@ -167,7 +167,7 @@ def crear_ratio_genero(df):
         if col_h not in df.columns:
             continue
 
-        # Extraer el nombre del producto (ej: ncont_ahorro → "ncont_ahorro")
+        # Extraer el nombre del producto (ej: ncont_ahorro --> "ncont_ahorro")
         producto = col_m.replace("_m_pc", "")
         col_ratio = f"ratio_mh_{producto}"
         pares_ratio.append((col_m, col_h, col_ratio, producto))
@@ -182,10 +182,10 @@ def crear_ratio_genero(df):
         media = df[col_ratio].mean()
         mediana = df[col_ratio].median()
         n_nan = df[col_ratio].isna().sum()
-        print(f"  ✓ {col_ratio:<35} — media: {media:.4f}  "
+        print(f"  OK {col_ratio:<35} — media: {media:.4f}  "
               f"mediana: {mediana:.4f}  NaN: {n_nan:,}")
 
-    print(f"\n  ✓ {len(pares_ratio)} columnas de ratio M/H creadas")
+    print(f"\n  OK {len(pares_ratio)} columnas de ratio M/H creadas")
     return df, pares_ratio
 
 
@@ -230,7 +230,7 @@ def crear_ever_alcaldesa(df):
     total_mun = n_ever + n_never
     pct_ever = n_ever / total_mun * 100
 
-    print(f"  ✓ ever_alcaldesa creada")
+    print(f"  OK ever_alcaldesa creada")
     print(f"    Municipios con alcaldesa alguna vez: {n_ever:,} ({pct_ever:.1f}%)")
     print(f"    Municipios sin alcaldesa nunca:      {n_never:,} ({100 - pct_ever:.1f}%)")
     print(f"    Total municipios:                    {total_mun:,}")
@@ -258,23 +258,23 @@ def estandarizar_ids(df, conn):
 
     # 1. Verificar que cvegeo_mun no tiene NULLs
     n_null = df["cvegeo_mun"].isna().sum()
-    print(f"  ✓ NULLs en cvegeo_mun: {n_null}")
+    print(f"  OK NULLs en cvegeo_mun: {n_null}")
 
     # 2. Verificar formato: 5 dígitos texto
     longitudes = df["cvegeo_mun"].str.len().value_counts()
-    print(f"  ✓ Longitudes de cvegeo_mun: {dict(longitudes)}")
+    print(f"  OK Longitudes de cvegeo_mun: {dict(longitudes)}")
 
     # 3. Verificar consistencia con cve_ent y cve_mun3
     # cvegeo_mun debería ser cve_ent || cve_mun3
     df["_check_cvegeo"] = df["cve_ent"].astype(str) + df["cve_mun3"].astype(str)
     inconsistentes = (df["cvegeo_mun"] != df["_check_cvegeo"]).sum()
     df = df.drop(columns=["_check_cvegeo"])
-    print(f"  ✓ Inconsistencias cvegeo_mun vs cve_ent+cve_mun3: {inconsistentes}")
+    print(f"  OK Inconsistencias cvegeo_mun vs cve_ent+cve_mun3: {inconsistentes}")
 
     # 4. Verificar unicidad por municipio
     cvegeo_por_mun = df.groupby("cve_mun")["cvegeo_mun"].nunique()
     multi_cvegeo = (cvegeo_por_mun > 1).sum()
-    print(f"  ✓ Municipios con múltiples cvegeo_mun: {multi_cvegeo}")
+    print(f"  OK Municipios con múltiples cvegeo_mun: {multi_cvegeo}")
 
     # 5. Crear índice en PostgreSQL para joins eficientes
     try:
@@ -282,9 +282,9 @@ def estandarizar_ids(df, conn):
             "CREATE INDEX IF NOT EXISTS idx_clean_cvegeo_mun "
             "ON inclusion_financiera_clean (cvegeo_mun)"
         ))
-        print(f"  ✓ Índice idx_clean_cvegeo_mun creado sobre inclusion_financiera_clean")
+        print(f"  OK Índice idx_clean_cvegeo_mun creado sobre inclusion_financiera_clean")
     except Exception as e:
-        print(f"  ⚠ Índice ya existe o error: {e}")
+        print(f"  [!] Índice ya existe o error: {e}")
 
     # 6. Número de municipios únicos por cada ID
     n_cve_mun = df["cve_mun"].nunique()
@@ -317,7 +317,7 @@ def main():
     # ── 1. Cargar datos de la tabla limpia ─────────────────────────────────
     print("\n1. Cargando datos desde inclusion_financiera_clean...")
     df = pd.read_sql("SELECT * FROM inclusion_financiera_clean", engine)
-    print(f"   ✓ {df.shape[0]:,} filas × {df.shape[1]} columnas cargadas")
+    print(f"   OK {df.shape[0]:,} filas × {df.shape[1]} columnas cargadas")
 
     # Limpiar columnas de ejecuciones anteriores (idempotencia)
     cols_to_drop = [c for c in df.columns
@@ -327,10 +327,10 @@ def main():
                     or c == "ever_alcaldesa"]
     if cols_to_drop:
         df = df.drop(columns=cols_to_drop)
-        print(f"   ✓ {len(cols_to_drop)} columnas de ejecución anterior eliminadas (idempotencia)")
+        print(f"   OK {len(cols_to_drop)} columnas de ejecución anterior eliminadas (idempotencia)")
 
     n_cols_antes = df.shape[1]
-    print(f"   ✓ Columnas base: {n_cols_antes}")
+    print(f"   OK Columnas base: {n_cols_antes}")
 
     # ── 2. Rec 5: log(población) ──────────────────────────────────────────
     print("\n2. Aplicando Rec 5: log(población)...")
@@ -378,8 +378,8 @@ def main():
         print("\n7. Aplicando Rec 9: Estandarización de IDs...")
         df_check, stats_ids = estandarizar_ids(df, conn)
 
-    print(f"\n   ✓ Tabla 'inclusion_financiera_clean' actualizada")
-    print(f"   ✓ PK (cve_mun, periodo_trimestre) restaurada")
+    print(f"\n   OK Tabla 'inclusion_financiera_clean' actualizada")
+    print(f"   OK PK (cve_mun, periodo_trimestre) restaurada")
 
     # ── 8. Resumen final ──────────────────────────────────────────────────
     n_cols_despues = df.shape[1]

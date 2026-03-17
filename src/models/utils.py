@@ -2,12 +2,12 @@
 00_utils.py — Funciones compartidas para el pipeline de modelado.
 
 Provee:
-  - load_panel()          → carga el parquet analítico
-  - OUTCOME_DEFS          → diccionario con los 5 outcomes primarios
-  - run_panel_ols()       → wrapper de PanelOLS con FE y cluster SE
-  - export_table_tex()    → exporta DataFrame a .tex
-  - plot_save()           → guarda figura PDF con defaults de paper
-  - stars()               → formato de significancia
+  - load_panel()          --> carga el parquet analítico
+  - OUTCOME_DEFS          --> diccionario con los 5 outcomes primarios
+  - run_panel_ols()       --> wrapper de PanelOLS con FE y cluster SE
+  - export_table_tex()    --> exporta DataFrame a .tex
+  - plot_save()           --> guarda figura PDF con defaults de paper
+  - stars()               --> formato de significancia
 """
 
 from __future__ import annotations
@@ -190,7 +190,7 @@ def export_table_tex(
     lines.append(r"\end{table}")
 
     path.write_text("\n".join(lines), encoding="utf-8")
-    print(f"  → LaTeX: {path}")
+    print(f"  --> LaTeX: {path}")
 
 
 # ---------------------------------------------------------------------------
@@ -203,4 +203,4 @@ def plot_save(fig: plt.Figure, path: Path, dpi: int = 300) -> None:
     png_path = path.with_suffix(".png")
     fig.savefig(png_path, bbox_inches="tight", dpi=150)
     plt.close(fig)
-    print(f"  → Figura: {path} + {png_path}")
+    print(f"  --> Figura: {path} + {png_path}")

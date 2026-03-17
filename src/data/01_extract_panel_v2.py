@@ -40,7 +40,7 @@ TABLE = "inclusion_financiera_v2"
 # 2. Trim utilities
 # ---------------------------------------------------------------------------
 def decode_trim(trim_code: int) -> tuple[int, int, str]:
-    """trim (QYY) → (quarter, year, 'YYYYQq')"""
+    """trim (QYY) --> (quarter, year, 'YYYYQq')"""
     q = trim_code // 100
     yy = trim_code % 100
     year = 2000 + yy
@@ -119,7 +119,7 @@ def build_treatment(df: pd.DataFrame) -> pd.DataFrame:
     df["alcaldesa_excl_trans"] = df["alcaldesa_final"].copy()
     df.loc[df["_is_transition"], "alcaldesa_excl_trans"] = np.nan
 
-    # alcaldesa_end_excl_trans: exclusión bilateral (transición → NaN, + 1 trimestre después)
+    # alcaldesa_end_excl_trans: exclusión bilateral (transición --> NaN, + 1 trimestre después)
     df["_next_trans"] = df.groupby("cve_mun")["_is_transition"].shift(-1).fillna(False)
     df["alcaldesa_end_excl_trans"] = df["alcaldesa_final"].copy()
     df.loc[df["_is_transition"] | df["_next_trans"], "alcaldesa_end_excl_trans"] = np.nan
@@ -228,7 +228,7 @@ def main():
     available = [c for c in ALL_COLS if c in df.columns]
     missing = [c for c in ALL_COLS if c not in df.columns]
     if missing:
-        print(f"\n  ⚠ Columnas no disponibles: {missing}")
+        print(f"\n  [!] Columnas no disponibles: {missing}")
 
     df = df[available].copy()
 
@@ -239,7 +239,7 @@ def main():
     pk_ok = df.duplicated(subset=["cve_mun", "periodo_trimestre"]).sum() == 0
     print(f"  Municipios: {n_mun:,}")
     print(f"  Periodos:   {n_per}")
-    print(f"  PK única:   {'✓' if pk_ok else '✗ DUPLICADOS'}")
+    print(f"  PK única:   {'OK' if pk_ok else 'FAIL DUPLICADOS'}")
 
     # Treatment distribution
     td = df["alcaldesa_final"].value_counts(normalize=True, dropna=False).sort_index()
@@ -252,9 +252,9 @@ def main():
     out_path = Path("data/processed/analytical_panel.parquet")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(out_path, index=False, engine="pyarrow")
-    print(f"\n✓ Exportado → {out_path}  ({out_path.stat().st_size / 1e6:.1f} MB)")
+    print(f"\nOK Exportado --> {out_path}  ({out_path.stat().st_size / 1e6:.1f} MB)")
     print(f"  {df.shape[0]:,} filas × {df.shape[1]} cols")
-    print(f"  Rango: {sorted(df['periodo_trimestre'].unique())[0]} → {sorted(df['periodo_trimestre'].unique())[-1]}")
+    print(f"  Rango: {sorted(df['periodo_trimestre'].unique())[0]} --> {sorted(df['periodo_trimestre'].unique())[-1]}")
     print("\nDone.")
 
 

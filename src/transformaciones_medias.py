@@ -40,11 +40,11 @@ def crear_alcaldesa_acumulado(df):
     tratamiento.
 
     Ejemplo para municipio 1011:
-      t=2018Q3 alcaldesa=1 → acumulado=1
-      t=2018Q4 alcaldesa=1 → acumulado=2
-      t=2019Q3 alcaldesa=1 → acumulado=5
-      t=2019Q4 alcaldesa=0 → acumulado=5  (no suma)
-      t=2021Q4 alcaldesa=1 → acumulado=6  (retoma)
+      t=2018Q3 alcaldesa=1 --> acumulado=1
+      t=2018Q4 alcaldesa=1 --> acumulado=2
+      t=2019Q3 alcaldesa=1 --> acumulado=5
+      t=2019Q4 alcaldesa=0 --> acumulado=5  (no suma)
+      t=2021Q4 alcaldesa=1 --> acumulado=6  (retoma)
 
     Justificación: Complementa al indicador binario `alcaldesa_final` al capturar
     la intensidad acumulada del tratamiento. Permite evaluar si el efecto de tener
@@ -74,7 +74,7 @@ def crear_alcaldesa_acumulado(df):
 
     # Distribución
     dist = df["alcaldesa_acumulado"].value_counts().sort_index()
-    print(f"  ✓ alcaldesa_acumulado creada")
+    print(f"  OK alcaldesa_acumulado creada")
     print(f"    Media:    {stats['media']}")
     print(f"    Mediana:  {stats['mediana']}")
     print(f"    Max:      {stats['max']} (= todos los 17 trimestres con alcaldesa)")
@@ -127,7 +127,7 @@ def crear_asinh_outcomes(df):
     old_asinh = [c for c in df.columns if c.endswith("_pc_asinh")]
     if old_asinh:
         df = df.drop(columns=old_asinh)
-        print(f"  ✓ {len(old_asinh)} columnas asinh anteriores eliminadas (idempotencia)")
+        print(f"  OK {len(old_asinh)} columnas asinh anteriores eliminadas (idempotencia)")
 
     stats = []
     for col in cols_pc:
@@ -150,7 +150,7 @@ def crear_asinh_outcomes(df):
     if len(stats) > 8:
         print(f"  ... ({len(stats) - 8} columnas más)")
 
-    print(f"\n  ✓ {len(cols_pc)} columnas asinh creadas (sufijo _asinh)")
+    print(f"\n  OK {len(cols_pc)} columnas asinh creadas (sufijo _asinh)")
 
     return df, stats
 
@@ -172,8 +172,8 @@ def imputar_tipo_pob(df):
       Metropoli:      1,003,530 – 1,922,523
 
     Municipios afectados:
-      - cve_mun=2007  San Felipe, BC     pob=20,320 → Semi-urbano (rango 15k–50k)
-      - cve_mun=4013  Dzitbalché, Camp.  pob=16,568 → Semi-urbano (rango 15k–50k)
+      - cve_mun=2007  San Felipe, BC     pob=20,320 --> Semi-urbano (rango 15k–50k)
+      - cve_mun=4013  Dzitbalché, Camp.  pob=16,568 --> Semi-urbano (rango 15k–50k)
     """
     print(f"\n{'='*70}")
     print("REC 12: Imputar tipo_pob NULLs")
@@ -183,7 +183,7 @@ def imputar_tipo_pob(df):
     print(f"  NULLs antes: {n_null_antes}")
 
     if n_null_antes == 0:
-        print(f"  ✓ No hay NULLs que imputar (ya resuelto)")
+        print(f"  OK No hay NULLs que imputar (ya resuelto)")
         return df, {"n_imputados": 0, "municipios": []}
 
     # Mostrar los municipios afectados
@@ -219,12 +219,12 @@ def imputar_tipo_pob(df):
             "filas_afectadas": int(n_rows),
         }
         municipios_imputados.append(info)
-        print(f"  → cve_mun={row['cve_mun']}  {row['municipio']}, {row['estado']}  "
-              f"pob={pob:,} → {cat} ({n_rows} filas)")
+        print(f"  --> cve_mun={row['cve_mun']}  {row['municipio']}, {row['estado']}  "
+              f"pob={pob:,} --> {cat} ({n_rows} filas)")
 
     n_null_despues = df["tipo_pob"].isna().sum()
-    print(f"\n  ✓ NULLs después: {n_null_despues}")
-    print(f"  ✓ {len(municipios_imputados)} municipio(s) imputado(s)")
+    print(f"\n  OK NULLs después: {n_null_despues}")
+    print(f"  OK {len(municipios_imputados)} municipio(s) imputado(s)")
 
     return df, {"n_imputados": len(municipios_imputados), "municipios": municipios_imputados}
 
@@ -241,7 +241,7 @@ def main():
     # ── 1. Cargar datos ───────────────────────────────────────────────────
     print("\n1. Cargando datos desde inclusion_financiera_clean...")
     df = pd.read_sql("SELECT * FROM inclusion_financiera_clean", engine)
-    print(f"   ✓ {df.shape[0]:,} filas × {df.shape[1]} columnas cargadas")
+    print(f"   OK {df.shape[0]:,} filas × {df.shape[1]} columnas cargadas")
 
     # Limpiar columnas de ejecuciones anteriores (idempotencia)
     cols_to_drop = [c for c in df.columns
@@ -249,10 +249,10 @@ def main():
                     or c.endswith("_pc_asinh")]
     if cols_to_drop:
         df = df.drop(columns=cols_to_drop)
-        print(f"   ✓ {len(cols_to_drop)} columnas de ejecución anterior eliminadas")
+        print(f"   OK {len(cols_to_drop)} columnas de ejecución anterior eliminadas")
 
     n_cols_antes = df.shape[1]
-    print(f"   ✓ Columnas base: {n_cols_antes}")
+    print(f"   OK Columnas base: {n_cols_antes}")
 
     # ── 2. Rec 10: alcaldesa_acumulado ────────────────────────────────────
     print("\n2. Aplicando Rec 10: alcaldesa_acumulado...")
@@ -294,8 +294,8 @@ def main():
             "ON inclusion_financiera_clean (cvegeo_mun)"
         ))
 
-    print(f"   ✓ Tabla 'inclusion_financiera_clean' actualizada")
-    print(f"   ✓ PK + índice cvegeo_mun restaurados")
+    print(f"   OK Tabla 'inclusion_financiera_clean' actualizada")
+    print(f"   OK PK + índice cvegeo_mun restaurados")
 
     # ── 6. Resumen final ──────────────────────────────────────────────────
     n_cols_despues = df.shape[1]

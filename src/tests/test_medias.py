@@ -14,7 +14,7 @@ with engine.connect() as conn:
     n_rows = conn.execute(text("SELECT COUNT(*) FROM inclusion_financiera_clean")).scalar()
     ok = n_rows == 41905
     results.append(ok)
-    print(f"T1 - Filas correctas ({n_rows:,}): {'✓' if ok else '✗'}")
+    print(f"T1 - Filas correctas ({n_rows:,}): {'OK' if ok else 'FAIL'}")
 
     n_cols = conn.execute(text(
         "SELECT COUNT(*) FROM information_schema.columns "
@@ -22,7 +22,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = n_cols >= 348
     results.append(ok)
-    print(f"T2 - Total columnas ({n_cols}): {'✓' if ok else '✗'}")
+    print(f"T2 - Total columnas ({n_cols}): {'OK' if ok else 'FAIL'}")
 
     # ── Rec 10: alcaldesa_acumulado ───────────────────────────────────
     exists = conn.execute(text(
@@ -31,7 +31,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = exists == 1
     results.append(ok)
-    print(f"T3 - alcaldesa_acumulado existe: {'✓' if ok else '✗'}")
+    print(f"T3 - alcaldesa_acumulado existe: {'OK' if ok else 'FAIL'}")
 
     # Must be non-negative
     neg = conn.execute(text(
@@ -39,7 +39,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = neg == 0
     results.append(ok)
-    print(f"T4 - Sin negativos ({neg}): {'✓' if ok else '✗'}")
+    print(f"T4 - Sin negativos ({neg}): {'OK' if ok else 'FAIL'}")
 
     # Max should be 17 (all trimesters)
     maxval = conn.execute(text(
@@ -47,7 +47,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = maxval == 17
     results.append(ok)
-    print(f"T5 - Max=17 ({maxval}): {'✓' if ok else '✗'}")
+    print(f"T5 - Max=17 ({maxval}): {'OK' if ok else 'FAIL'}")
 
     # If alcaldesa_final=0 for all t, acumulado should be 0 on last t
     bad = conn.execute(text("""
@@ -59,7 +59,7 @@ with engine.connect() as conn:
     """)).scalar()
     ok = bad == 0
     results.append(ok)
-    print(f"T6 - never-treated acumulado=0: {'✓' if ok else '✗'}")
+    print(f"T6 - never-treated acumulado=0: {'OK' if ok else 'FAIL'}")
 
     # Monotonic: acumulado should never decrease within a municipality
     bad = conn.execute(text("""
@@ -71,7 +71,7 @@ with engine.connect() as conn:
     """)).scalar()
     ok = bad == 0
     results.append(ok)
-    print(f"T7 - Monótono creciente ({bad} violaciones): {'✓' if ok else '✗'}")
+    print(f"T7 - Monótono creciente ({bad} violaciones): {'OK' if ok else 'FAIL'}")
 
     data["alcaldesa_acumulado"] = {
         "max": int(maxval),
@@ -85,7 +85,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = n_asinh == 51
     results.append(ok)
-    print(f"T8 - Columnas asinh ({n_asinh}): {'✓' if ok else '✗'}")
+    print(f"T8 - Columnas asinh ({n_asinh}): {'OK' if ok else 'FAIL'}")
 
     # Verify formula: asinh(x) = ln(x + sqrt(x²+1))
     r = conn.execute(text(
@@ -94,7 +94,7 @@ with engine.connect() as conn:
     )).fetchall()
     ok = all(abs(float(row[1]) - math.asinh(float(row[0]))) < 0.001 for row in r)
     results.append(ok)
-    print(f"T9 - Fórmula asinh correcta: {'✓' if ok else '✗'}")
+    print(f"T9 - Fórmula asinh correcta: {'OK' if ok else 'FAIL'}")
 
     # asinh(0) should be 0
     n_zero = conn.execute(text(
@@ -103,7 +103,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = n_zero == 0
     results.append(ok)
-    print(f"T10 - asinh(0)=0: {'✓' if ok else '✗'}")
+    print(f"T10 - asinh(0)=0: {'OK' if ok else 'FAIL'}")
 
     # ── Rec 12: tipo_pob ──────────────────────────────────────────────
     n_null = conn.execute(text(
@@ -111,7 +111,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = n_null == 0
     results.append(ok)
-    print(f"T11 - tipo_pob sin NULLs ({n_null}): {'✓' if ok else '✗'}")
+    print(f"T11 - tipo_pob sin NULLs ({n_null}): {'OK' if ok else 'FAIL'}")
 
     # San Felipe and Dzitbalche should be Semi-urbano
     for cve in [2007, 4013]:
@@ -120,7 +120,7 @@ with engine.connect() as conn:
         )).scalar()
         ok = tp == "Semi-urbano"
         results.append(ok)
-        print(f"T{12 if cve==2007 else 13} - cve_mun={cve} tipo_pob='{tp}': {'✓' if ok else '✗'}")
+        print(f"T{12 if cve==2007 else 13} - cve_mun={cve} tipo_pob='{tp}': {'OK' if ok else 'FAIL'}")
 
     # ── Integrity ─────────────────────────────────────────────────────
     pk = conn.execute(text(
@@ -129,7 +129,7 @@ with engine.connect() as conn:
     )).scalar()
     ok = pk >= 1
     results.append(ok)
-    print(f"T14 - PK intacta: {'✓' if ok else '✗'}")
+    print(f"T14 - PK intacta: {'OK' if ok else 'FAIL'}")
 
     idx = conn.execute(text(
         "SELECT COUNT(*) FROM pg_indexes "
@@ -137,20 +137,20 @@ with engine.connect() as conn:
     )).scalar()
     ok = idx >= 1
     results.append(ok)
-    print(f"T15 - Índice cvegeo_mun: {'✓' if ok else '✗'}")
+    print(f"T15 - Índice cvegeo_mun: {'OK' if ok else 'FAIL'}")
 
     n_orig = conn.execute(text(
         "SELECT COUNT(*) FROM information_schema.columns WHERE table_name='inclusion_financiera'"
     )).scalar()
     ok = n_orig == 175
     results.append(ok)
-    print(f"T16 - Tabla original intacta ({n_orig} cols): {'✓' if ok else '✗'}")
+    print(f"T16 - Tabla original intacta ({n_orig} cols): {'OK' if ok else 'FAIL'}")
 
 print()
 passed = sum(results)
 total = len(results)
 if all(results):
-    print(f"=== ✓ Todas las {total} pruebas de Recs Medias PASARON ===")
+    print(f"=== OK Todas las {total} pruebas de Recs Medias PASARON ===")
 else:
     failed = total - passed
-    print(f"=== ✗ {failed}/{total} prueba(s) FALLARON ===")
+    print(f"=== FAIL {failed}/{total} prueba(s) FALLARON ===")
