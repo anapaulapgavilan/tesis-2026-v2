@@ -1,8 +1,20 @@
 """
-tesis_alcaldesas.models.utils — Funciones compartidas para el pipeline de modelado.
+tesis_alcaldesas.models.utils -- Funciones compartidas para el pipeline de modelado.
+
+GUIA PARA EL ASESOR:
+  Este modulo centraliza las funciones que usan TODOS los scripts de modelado.
+  Evita duplicacion de codigo y asegura consistencia en:
+    - Carga de datos (load_panel)
+    - Estimacion de regresiones panel (run_panel_ols)
+    - Exportacion a LaTeX (export_table_tex)
+    - Formateo de coeficientes con estrellas de significancia
+
+  La funcion clave es run_panel_ols(), que encapsula PanelOLS de linearmodels
+  con efectos fijos de municipio (alpha_i) y periodo (gamma_t), y errores
+  estandar clusterizados a nivel de municipio.
 
 Provee:
-  - load_panel()          --> carga el parquet analítico
+  - load_panel()          --> carga el parquet analitico
   - OUTCOME_DEFS          --> diccionario con los 5 outcomes primarios
   - PRIMARY_5             --> lista de 5 outcomes primarios
   - run_panel_ols()       --> wrapper de PanelOLS con FE y cluster SE
@@ -67,6 +79,21 @@ def load_panel(path: Path = PARQUET) -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 # Panel regression helper
 # ---------------------------------------------------------------------------
+# GUIA: Esta es la funcion central de estimacion. Implementa la ecuacion:
+#
+#   Y_{it} = alpha_i + gamma_t + X_{it}'beta + epsilon_{it}
+#
+# donde:
+#   - alpha_i = efecto fijo de municipio (absorbe heterogeneidad no observada
+#     que no varia en el tiempo, como geografia, cultura, etc.)
+#   - gamma_t = efecto fijo de periodo (absorbe shocks macroeconomicos que
+#     afectan a todos los municipios por igual, como crisis o reformas)
+#   - X_{it} = regresores (tratamiento D_it + controles como log_pob)
+#   - Los errores estandar se clusteran a nivel municipal para permitir
+#     correlacion serial y heteroscedasticidad dentro de cada municipio.
+#
+# Se usa linearmodels.PanelOLS que implementa la transformacion within
+# (demeaning) para absorber los efectos fijos.
 def run_panel_ols(
     df: pd.DataFrame,
     depvar: str,

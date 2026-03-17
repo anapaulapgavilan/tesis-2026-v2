@@ -1,13 +1,32 @@
 """
-05_heterogeneity.py — Tabla 4: Heterogeneidad del efecto TWFE.
+05_heterogeneity.py -- Tabla 4: Heterogeneidad del efecto TWFE.
+
+GUIA PARA EL ASESOR:
+  Este script investiga si el efecto del tratamiento varia segun
+  caracteristicas observables del municipio. Es decir, si tener
+  alcaldesa importa MAS en ciertos contextos.
+
+  Se estima el TWFE por sub-muestras (no interacciones) para
+  obtener betas directamente interpretables por grupo.
+
+  Dimensiones exploradas:
+    H1. Tipo de poblacion (CONAPO):
+        Rural / En Transicion / Semi-urbano / Urbano / Semi-metropoli / Metropoli
+    H2. Terciles de poblacion (basados en log_pob promedio municipal)
+
+  Correccion por pruebas multiples:
+    Como se estiman 9 coeficientes simultaneamente, se aplica la
+    correccion de Benjamini-Hochberg (FDR) para controlar la tasa
+    de falsos descubrimientos. Los q-values son p-values ajustados.
+    Si q < 0.10, el resultado sobrevive la correccion.
+
+  NOTA: Antes de estimar heterogeneidad, se verifica que los
+  pre-trends sean razonables (p > 0.10). Si no pasan, los
+  resultados de heterogeneidad deben interpretarse con cautela.
 
 Dimensiones:
   H1. tipo_pob  (Rural / En Transicion / Semi-urbano / Urbano / Semi-metropoli / Metropoli)
-  H2. Cuantiles de población (terciles de log_pob)
-
-Corrección por múltiples pruebas: Benjamini-Hochberg (FDR), q-values.
-
-Se ejecuta solo si pre-trends son razonables (check automático o pass-through).
+  H2. Cuantiles de poblacion (terciles de log_pob)
 
 Outputs:
   outputs/paper/tabla_4_heterogeneidad.csv

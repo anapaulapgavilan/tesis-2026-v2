@@ -1,15 +1,29 @@
 """
-04_robustness.py — Tabla 3: Pruebas de robustez mínimas.
+04_robustness.py -- Tabla 3: Pruebas de robustez.
 
-Tests:
-  R1. Escala alternativa: log1p vs asinh
-  R2. Winsor p1–p99 (+ asinh)
-  R3. Excluir transiciones (alcaldesa_excl_trans)
-  R4. Placebo temporal (tto adelantado 4 trimestres)
-  R5. Placebo de género (outcomes masculinos, misma escala)
-  R6. Escala alternativa: winsorizada en nivel (_pc_w, sin asinh)
-  R7. Escala alternativa: per cápita cruda en nivel (_pc, sin transformación)
-  R8. Absorbing-only: solo switchers con tratamiento 0-->1 permanente
+GUIA PARA EL ASESOR:
+  Este script ejecuta 8 pruebas de robustez para verificar que los resultados
+  del TWFE baseline no dependen de decisiones metodologicas particulares.
+  Cada test cambia UNA dimension y compara con el baseline.
+
+  Tests implementados:
+    R1. Escala log1p: usa log(1+y) en vez de asinh. Si los resultados son
+        similares, la eleccion de transformacion no importa.
+    R2. Winsor + asinh: recorta outliers al p1-p99 antes de asinh.
+        Verifica que valores extremos no impulsan los resultados.
+    R3. Excluir transiciones: usa alcaldesa_excl_trans (NaN en trimestres de
+        cambio de gobierno). Verifica que la medicion del tratamiento es robusta.
+    R4. Placebo temporal: adelanta el tratamiento 4 trimestres. Si beta != 0,
+        habria "anticipacion" del efecto (amenaza a la identificacion).
+    R5. Placebo de genero: estima el efecto sobre outcomes MASCULINOS.
+        Si beta != 0 para hombres, el efecto no seria especifico a mujeres.
+    R6. Nivel winsorizado: outcome en _pc_w sin transformar (nivel).
+        Verifica que la transformacion no oculta efectos en niveles.
+    R7. Per capita crudo: outcome en _pc sin ninguna transformacion.
+        Analogamente al R6, en escala cruda.
+    R8. Absorbing-only: restringe a switchers con tratamiento permanente (0-->1).
+        Elimina municipios con tratamientos que se "apagan y prenden".
+        Valida la comparacion "limpia" tipo Goodman-Bacon.
 
 Outputs:
   outputs/paper/tabla_3_robustez.csv

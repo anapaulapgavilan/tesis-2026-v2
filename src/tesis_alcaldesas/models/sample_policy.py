@@ -1,11 +1,32 @@
 """
-sample_policy.py — Sensibilidad a la definición de muestra.
+sample_policy.py -- Sensibilidad a la definicion de muestra.
+
+GUIA PARA EL ASESOR:
+  En la construccion del panel, se identificaron ~8 municipios con
+  datos incompletos (no aparecen en todos los trimestres). Estos se
+  marcan con flag_incomplete_panel = 1.
+
+  La muestra principal ("main") los excluye para tener un panel
+  perfectamente balanceado (todos los municipios tienen 17 trimestres).
+
+  Pero un referee podria preguntar: "Estas eliminando municipios
+  selectivamente?"
+
+  Este script responde corriendo el TWFE en AMBAS muestras:
+    1. Main sample: 2,463 municipios (excluye incompletos)
+    2. Full sample: 2,471 municipios (incluye todos)
+
+  Si los coeficientes son practicamente identicos entre ambas
+  muestras, concluimos que la exclusion es inocua y no
+  introduce sesgo de seleccion.
+
+  El archivo sample_sensitivity.txt reporta las diferencias
+  absolutas en coeficientes y errores estandar. Diferencias
+  menores a 0.001 son triviales.
 
 Corre TWFE baseline en dos muestras:
   1. Main sample: drop municipios con flag_incomplete_panel == 1
   2. Full sample: incluye todo
-
-Compara coeficientes para verificar que la exclusión es inocua.
 
 Outputs:
   outputs/paper/tabla_2_twfe_main.csv / .tex

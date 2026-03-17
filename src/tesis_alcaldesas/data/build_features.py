@@ -1,5 +1,28 @@
 """
-build_features.py — Construye el dataset analítico final.
+build_features.py -- Paso 2 del pipeline: Construye el dataset analitico final.
+
+GUIA PARA EL ASESOR:
+  Este script transforma los datos crudos del Paso 1 en variables listas
+  para la estimacion econometrica. Es el corazon de la ingenieria de datos.
+
+  Etapas (en orden):
+    1. VALIDACION: Verifica PK unica, identifica panel desbalanceado (8 municipios
+       con periodos faltantes de 102 obs, 0.24% del panel).
+    2. PER CAPITA: Cada outcome se normaliza por poblacion adulta femenina
+       (x10,000). Esto permite comparar municipios de distinto tamano.
+    3. TRANSFORMACIONES FUNCIONALES:
+       - asinh(y_pc): transformacion principal. Similar a log() pero
+         definida en cero. Permite interpretar coeficientes como semi-elasticidades.
+         (Bellemare & Wichman, 2020)
+       - winsor p1-p99: recorta colas para chequear sensibilidad a outliers.
+       - log(1+y_pc): alternativa clasica de robustez.
+    4. RATIOS DE GENERO: outcome_m / outcome_h para medir brecha relativa.
+    5. FLAGS: marca observaciones con denominador cero, panel incompleto,
+       o outcomes indefinidos para analisis de sensibilidad.
+    6. COHORTE: clasifica municipios en never-treated (1,476), switcher (894),
+       y always-treated (101). Calcula event_time = t - first_treat_t.
+
+  El dataset final tiene 41,905 filas x 170 columnas y se exporta como parquet.
 
 Input:   data/processed/analytical_panel.parquet
 Outputs: data/processed/analytical_panel_features.parquet
@@ -8,14 +31,6 @@ Outputs: data/processed/analytical_panel_features.parquet
 
 Uso:
     python -m tesis_alcaldesas.data.build_features
-
-Etapas:
-  1. Validar PK y balance de panel
-  2. Outcomes per cápita (×10,000 mujeres adultas)
-  3. Transformaciones: asinh (baseline), winsor p1-p99, log1p
-  4. Flags: denominador cero, outcomes indefinidos
-  5. Cohorte y event_time
-  6. Exportar
 """
 
 from __future__ import annotations
@@ -100,8 +115,14 @@ def load_and_validate(path: Path) -> tuple[pd.DataFrame, list[str]]:
 
 
 # ===================================================================
-# 2. OUTCOMES PER CÁPITA (×10,000)
+# 2. OUTCOMES PER CAPITA (x10,000)
 # ===================================================================
+# GUIA: La normalizacion per capita es esencial porque los outcomes
+# crudos estan en numeros absolutos. Un municipio grande tiene mas
+# contratos simplemente por tener mas poblacion.
+# Dividimos por pob_adulta_m y multiplicamos por 10,000 para obtener
+# "contratos por cada 10,000 mujeres adultas".
+# Si el denominador es 0, el resultado es NaN (no division por cero).
 def build_per_capita(df: pd.DataFrame, outcomes: list[str], denom: str) -> pd.DataFrame:
     """Crea columnas _pc = 10000 * raw / denom."""
     for col in outcomes:
@@ -121,6 +142,21 @@ def build_per_capita(df: pd.DataFrame, outcomes: list[str], denom: str) -> pd.Da
 # ===================================================================
 # 3. TRANSFORMACIONES
 # ===================================================================
+# GUIA: Se aplican 3 transformaciones funcionales a cada outcome per capita.
+#
+# a) asinh (arcoseno hiperbolico inverso): Y* = asinh(Y_pc)
+#    - Principal escala usada en las regresiones.
+#    - Similar a log(Y) para valores grandes, pero definida en Y=0.
+#    - Permite interpretar coeficientes como semi-elasticidades aproximadas.
+#    - Referencia: Bellemare & Wichman (2020, JASA).
+#
+# b) winsor p1-p99: Recorta valores extremos al percentil 1 y 99.
+#    - Usada en pruebas de robustez (R2) para verificar que los resultados
+#      no estan impulsados por outliers.
+#
+# c) log(1+Y_pc): Transformacion clasica alternativa.
+#    - Usada en prueba de robustez (R1) para verificar que la eleccion
+#      de asinh vs log no cambia las conclusiones.
 def build_asinh(df: pd.DataFrame, outcomes: list[str]) -> pd.DataFrame:
     """asinh(y_pc) — robusta a ceros y valores negativos."""
     for col in outcomes:
@@ -158,8 +194,14 @@ def build_log1p(df: pd.DataFrame, outcomes: list[str]) -> pd.DataFrame:
 
 
 # ===================================================================
-# 4. RATIOS BRECHA DE GÉNERO
+# 4. RATIOS BRECHA DE GENERO
 # ===================================================================
+# GUIA: Los ratios M/H capturan la brecha de genero relativa.
+# Si ratio = 1, hombres y mujeres tienen la misma inclusion.
+# Si ratio < 1, las mujeres estan sub-representadas.
+# Estos ratios se usan como outcomes adicionales para verificar
+# si la alcaldesa cierra la brecha de genero (no solo aumenta
+# outcomes femeninos en forma neutral).
 def build_ratios(df: pd.DataFrame, outcomes_m: list[str], outcomes_h: list[str]) -> pd.DataFrame:
     """ratio_mh = outcome_m_pc / outcome_h_pc. NaN cuando denominador = 0."""
     for col_m, col_h in zip(outcomes_m, outcomes_h):
@@ -205,6 +247,19 @@ def build_flags(df: pd.DataFrame, outcomes: list[str], denom: str) -> pd.DataFra
 # ===================================================================
 # 6. COHORTE Y EVENT TIME
 # ===================================================================
+# GUIA: La clasificacion de cohortes es fundamental para el diseno DiD.
+#
+# Definiciones:
+#   - never-treated: municipios que NUNCA tuvieron alcaldesa (D_it = 0 siempre).
+#     Son el grupo de control principal (1,476 municipios).
+#   - switcher: municipios que transicionaron de D=0 a D=1 en algun punto.
+#     Son los tratados de interes (894 municipios).
+#   - always-treated: municipios con D_it = 1 en TODOS los periodos.
+#     Se excluyen del event study (no tienen pre-periodo) pero se incluyen
+#     en el TWFE baseline (101 municipios).
+#
+# El event_time = t_index - first_treat_t mide la distancia al primer
+# trimestre de tratamiento. Negativo = pre-tratamiento, 0 = onset.
 def build_cohort(df: pd.DataFrame) -> pd.DataFrame:
     """
     Añade:

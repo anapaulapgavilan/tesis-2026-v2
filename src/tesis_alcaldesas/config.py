@@ -1,8 +1,22 @@
 """
-tesis_alcaldesas.config — Configuración centralizada del proyecto.
+tesis_alcaldesas.config -- Configuracion centralizada del proyecto.
+
+GUIA PARA EL ASESOR:
+  Este archivo es el "centro de control" de toda la tesis.
+  Aqui se definen:
+    1. RUTAS: donde viven los datos, outputs, y documentacion.
+    2. CARGA DE DATOS: funcion load_csv() que abstrae la lectura de CSVs.
+    3. CONEXION A BD: funcion legacy get_engine() (ya no se usa en el pipeline).
+    4. OUTCOMES: las 17 variables de resultado (mujeres y hombres) y las
+       5 primarias que son el foco del analisis econometrico.
+    5. LEAKAGE: columnas que NUNCA deben usarse como controles en las
+       regresiones (leads/lags, tratamiento acumulado, etc.).
+
+  Cualquier cambio en la definicion de outcomes o rutas se hace aqui
+  y se propaga automaticamente a todo el pipeline.
 
 Provee:
-  - Rutas canónicas (BASE_DIR, DATA_DIR, OUTPUT_DIR, …)
+  - Rutas canonicas (BASE_DIR, DATA_DIR, OUTPUT_DIR, ...)
   - Rutas CSV para datos exportados de tesis_db
   - get_engine() --> SQLAlchemy Engine (legacy, opcional)
   - Listas de outcomes, leakage y constantes reutilizables
@@ -10,7 +24,7 @@ Provee:
 Nota (2026-03):
   La base de datos PostgreSQL (tesis_db) fue exportada a CSV y
   almacenada en data/.  El pipeline principal ya no requiere una
-  conexión activa a PostgreSQL — lee directamente de los CSV/parquet.
+  conexion activa a PostgreSQL -- lee directamente de los CSV/parquet.
 """
 
 from __future__ import annotations
@@ -126,14 +140,20 @@ def get_engine():
 # ============================================================
 
 # --- 17 outcomes crudos (mujeres) ---
+# GUIA: Estas son las variables de resultado de la CNBV (Comision Nacional
+# Bancaria y de Valores) que miden la inclusion financiera de las mujeres.
+# Se agrupan en 3 dimensiones:
+#   - Extension: numero de contratos (cuentas bancarias)
+#   - Profundidad: saldos (cuanto dinero hay en esas cuentas)
+#   - Productos: tarjetas de debito/credito e hipotecas
 RAW_OUTCOMES_M: list[str] = [
-    # Extensión
+    # Extension (numero de contratos por tipo de cuenta)
     "ncont_total_m", "ncont_ahorro_m", "ncont_plazo_m",
     "ncont_n1_m", "ncont_n2_m", "ncont_n3_m", "ncont_tradic_m",
-    # Profundidad (saldos)
+    # Profundidad (saldos monetarios por tipo de cuenta)
     "saldocont_total_m", "saldocont_ahorro_m", "saldocont_plazo_m",
     "saldocont_n1_m", "saldocont_n2_m", "saldocont_n3_m", "saldocont_tradic_m",
-    # Productos
+    # Productos financieros (tarjetas e hipotecas)
     "numtar_deb_m", "numtar_cred_m", "numcontcred_hip_m",
 ]
 
@@ -141,6 +161,15 @@ RAW_OUTCOMES_M: list[str] = [
 RAW_OUTCOMES_H: list[str] = [col.replace("_m", "_h") for col in RAW_OUTCOMES_M]
 
 # --- 5 outcomes primarios (mujeres) ---
+# GUIA: Estos 5 outcomes son el foco principal del analisis econometrico.
+# Cubren las 3 dimensiones de inclusion financiera:
+#   1. Contratos totales   --> extension general
+#   2. Tarjetas de debito  --> acceso basico a servicios financieros
+#   3. Tarjetas de credito --> acceso a credito al consumo
+#   4. Creditos hipotecarios --> acceso a credito de largo plazo
+#   5. Saldo total         --> profundidad financiera
+# Todos los modelos (TWFE, event study, robustez, heterogeneidad)
+# se estiman sobre estos 5 outcomes.
 PRIMARY_OUTCOMES: list[str] = [
     "ncont_total_m",
     "numtar_deb_m",
@@ -159,6 +188,10 @@ OUTCOME_LABELS: dict[str, dict[str, str]] = {
 }
 
 # --- Columnas de leakage (nunca usar como controles) ---
+# GUIA: Estas variables contienen informacion del futuro o del
+# tratamiento en si. Usarlas como controles introduciria sesgo.
+# Por ejemplo, ever_alcaldesa resumen post-outcome y los leads
+# (f1, f2, f3) solo se usan en el event study, no como controles.
 LEAKAGE_COLS: list[str] = [
     "ever_alcaldesa",
     "alcaldesa_acumulado",

@@ -1,13 +1,40 @@
 """
-event_study_sensitivity.py — Sensibilidad del event study al bin extremo y ventana.
+event_study_sensitivity.py -- Sensibilidad del event study al bin extremo y ventana.
 
-Blinda la crítica de que el p=0.083 (tarjetas crédito) viene del bin k≤-4.
+GUIA PARA EL ASESOR:
+  En el event study principal (04_event_study.py), la variable
+  numtar_cred_m (tarjetas de credito mujeres) tiene p=0.083 en el
+  chi-cuadrado conjunto de pre-trends. Esto esta justo al borde.
 
-Variantes para los 2 outcomes más delicados (numtar_cred_m, ncont_total_m):
-  A) Ventana alternativa: K=3 leads, L=8 lags (bin en k≤-3)
-  B) Ventana extendida: K=6 leads, L=8 lags (bin en k≤-6) 
-  C) Excluir cohortes con first_treat muy temprano (g=0), reduciendo peso
-     en el bin extremo
+  La sospecha es que ese p viene del "bin extremo": el indicador
+  binario que agrupa todos los periodos k <= -4 en una sola dummy.
+  Si hay pocos municipios en ese bin, su estimacion es ruidosa y
+  puede jalar todo el test.
+
+  Este script testea 3 variantes de ventana para verificar si
+  los pre-trends mejoran cuando cambiamos la definicion del bin:
+
+    A) Ventana corta: K=3 leads, L=8 lags (bin en k <= -3)
+       --> Comprime mas periodos en el bin, pero lo aleja del tratamiento
+    B) Ventana extendida: K=6 leads, L=8 lags (bin en k <= -6)
+       --> Usa mas leads individuales, bin solo para muy lejanos
+    C) Excluir cohortes tempranas (g=0):
+       --> Elimina municipios que cambian de alcaldesa en el primer
+           periodo, que son los que dominan el bin extremo
+
+  Si en las 3 variantes p > 0.10, concluimos que los pre-trends
+  del baseline son robustos y que el p=0.083 es un artefacto del
+  binning, no una violacion del supuesto de tendencias paralelas.
+
+  Interpretacion visual: Se genera un grafico multi-panel donde
+  cada columna es una variante (A, B, C) y cada fila un outcome.
+  Las bandas de confianza al 95% deben cruzar cero en todos los
+  leads pre-tratamiento.
+
+Variantes para los 2 outcomes mas delicados (numtar_cred_m, ncont_total_m):
+  A) K=3 leads, L=8 lags (bin en k<=-3)
+  B) K=6 leads, L=8 lags (bin en k<=-6)
+  C) Excluir cohortes con first_treat muy temprano (g=0)
 
 Outputs:
   outputs/paper/figura_2_event_study_sens.pdf

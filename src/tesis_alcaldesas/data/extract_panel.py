@@ -1,16 +1,33 @@
 """
-extract_panel.py — Extrae columnas necesarias de inclusion_financiera_clean
-                   y exporta un parquet listo para feature engineering.
+extract_panel.py -- Paso 1 del pipeline: Extrae columnas del CSV crudo
+                    y exporta un parquet limpio para feature engineering.
+
+GUIA PARA EL ASESOR:
+  Este script es la PRIMERA etapa del pipeline de datos.
+  
+  Que hace:
+    1. Lee el CSV exportado de la CNBV (inclusion_financiera_clean.csv)
+    2. Selecciona las 61 columnas necesarias para el analisis
+    3. Valida que todas existan y que la PK (cve_mun, periodo_trimestre) sea unica
+    4. Exporta a Parquet para lectura rapida en pasos posteriores
+  
+  Estructura de las 61 columnas:
+    - 7 identificadores (cve_mun, periodo_trimestre, año, etc.)
+    - 5 variables de tratamiento (alcaldesa_final y variantes)
+    - 6 leads/lags para event study
+    - 2 controles (log_pob, log_pob_adulta)
+    - 3 poblaciones denominador (pob_adulta_m, pob_adulta_h, pob_adulta)
+    - 2 categoricas (tipo_pob, region)
+    - 2 auxiliares (ok_panel_completo, quarters_in_base)
+    - 17 outcomes mujeres + 17 outcomes hombres (crudos, sin transformar)
+  
+  El resultado es un panel de 41,905 obs (2,471 municipios x 17 trimestres).
 
 Uso:
     python -m tesis_alcaldesas.data.extract_panel
 
 Salida:
     data/processed/analytical_panel.parquet
-
-Nota (2026-03):
-    Originalmente leía de PostgreSQL.  Ahora lee del CSV exportado
-    inclusion_financiera_clean.csv ubicado en data/.
 """
 
 from __future__ import annotations
@@ -26,6 +43,10 @@ from tesis_alcaldesas.config import load_csv, DATA_DIR
 # ---------------------------------------------------------------------------
 
 # --- Identificadores y panel ---
+# GUIA: Estas columnas identifican cada observacion en el panel.
+# La clave primaria es (cve_mun, periodo_trimestre).
+# t_index es un indice numerico 0-based (0 = 2018Q3) que facilita
+# las operaciones temporales en el event study.
 ID_COLS = [
     "cve_mun",          # PK parte 1  (bigint)
     "periodo_trimestre", # PK parte 2  (text, "2018Q3"–"2022Q3")
@@ -37,6 +58,10 @@ ID_COLS = [
 ]
 
 # --- Tratamiento ---
+# GUIA: alcaldesa_final es la variable de tratamiento principal D_{it}.
+# Vale 1 si el municipio i tiene alcaldesa en el trimestre t.
+# Las variantes (excl_trans, end_excl_trans) excluyen periodos de
+# transicion para pruebas de robustez (ver 04_robustness.py).
 TREATMENT_COLS = [
     "alcaldesa_final",       # D_it {0,1} — tratamiento principal
     "ever_alcaldesa",        # max_t D_it — invariante; para balance/heterogeneidad
@@ -46,26 +71,41 @@ TREATMENT_COLS = [
     "alcaldesa_end_excl_trans",
 ]
 
-# Leads/lags — SOLO para event study, NUNCA como controles
+# Leads/lags -- SOLO para event study, NUNCA como controles
+# GUIA: Los leads (f1-f3) capturan anticipacion del tratamiento.
+# Los lags (l1-l3) capturan el efecto rezagado. Se usan solo
+# en el event study (03_event_study.py) para diagnosticar
+# tendencias pre-tratamiento.
 EVENT_STUDY_COLS = [
     "alcaldesa_final_f1", "alcaldesa_final_f2", "alcaldesa_final_f3",  # leads
     "alcaldesa_final_l1", "alcaldesa_final_l2", "alcaldesa_final_l3",  # lags
 ]
 
 # --- Controles ---
+# GUIA: log_pob es el unico control en la especificacion principal.
+# Es un control "pre-determinado" (cambia lentamente) que absorbe
+# diferencias en tamano entre municipios. No incluimos mas controles
+# para evitar el "bad controls problem" (Angrist & Pischke, 2009).
 CONTROL_COLS = [
     "log_pob",           # ln(pob+1); control pre-determinado/lento
     "log_pob_adulta",    # ln(pob_adulta+1)
 ]
 
-# --- Población (denominadores para per cápita) ---
+# --- Poblacion (denominadores para per capita) ---
+# GUIA: Los outcomes crudos estan en numeros absolutos. Para hacer
+# comparables municipios de diferente tamano, normalizamos por
+# poblacion adulta (por 10,000 habitantes). pob_adulta_m es el
+# denominador principal para outcomes femeninos.
 POP_COLS = [
     "pob_adulta_m",  # denominador principal (mujeres adultas)
     "pob_adulta_h",  # denominador hombres (para ratios)
     "pob_adulta",    # denominador total
 ]
 
-# --- Categóricas (heterogeneidad) ---
+# --- Categoricas (heterogeneidad) ---
+# GUIA: Estas variables permiten analizar si el efecto del tratamiento
+# varia segun el tipo de municipio (rural vs urbano) o la region.
+# Se usan en 05_heterogeneity.py para sub-muestras.
 CAT_COLS = [
     "tipo_pob",   # Rural / En Transicion / Semi-urbano / Urbano / Semi-metropoli / Metropoli
     "region",     # 6 regiones
@@ -77,8 +117,10 @@ AUX_COLS = [
     "quarters_in_base",    # trimestres presentes
 ]
 
-# --- Raw outcomes (mujeres) — 17 variables ---
-# Se extraen en crudo para re-calcular per cápita de forma reproducible.
+# --- Raw outcomes (mujeres) --- 17 variables ---
+# GUIA: Se extraen en crudo (numeros absolutos) para luego
+# recalcular per capita de forma reproducible en build_features.py.
+# El sufijo _m indica "mujeres".
 RAW_OUTCOMES_M = [
     # Extensión
     "ncont_total_m",
@@ -102,7 +144,11 @@ RAW_OUTCOMES_M = [
     "numcontcred_hip_m",
 ]
 
-# --- Raw outcomes (hombres) — para ratios de brecha de género ---
+# --- Raw outcomes (hombres) --- para ratios de brecha de genero ---
+# GUIA: Los outcomes masculinos (sufijo _h) se usan para:
+#   1. Calcular ratios de brecha de genero: outcome_m / outcome_h
+#   2. Placebos de genero: si el tratamiento afecta a hombres, el
+#      efecto no seria especifico a mujeres (ver R5 en robustness.py)
 RAW_OUTCOMES_H = [col.replace("_m", "_h") for col in RAW_OUTCOMES_M]
 # numcontcred_hip no tiene _pm; _h sí existe (verificado en profile CSV)
 

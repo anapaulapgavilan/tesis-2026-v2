@@ -1,10 +1,28 @@
 """
-02_twfe.py — TWFE baseline: FE municipio + FE periodo, cluster SE municipio.
+02_twfe.py -- Tabla 2: TWFE baseline (Two-Way Fixed Effects).
 
-Ecuación:
-  Y_{it} = α_i + γ_t + β · D_{it} + X_{it}'δ + ε_{it}
+GUIA PARA EL ASESOR:
+  Este es el modelo principal de la tesis. Estima el efecto causal promedio
+  de tener una alcaldesa sobre la inclusion financiera de las mujeres.
 
-  β = "efecto promedio TWFE" (NO ATT; ver Goodman-Bacon 2021)
+  Ecuacion estimada (para cada outcome Y):
+
+    Y_{it} = alpha_i + gamma_t + beta * D_{it} + delta * log_pob_{it} + epsilon_{it}
+
+  donde:
+    - Y_{it}      = outcome per capita en escala asinh (ej: contratos totales)
+    - alpha_i     = efecto fijo de municipio (absorbe geografia, cultura, etc.)
+    - gamma_t     = efecto fijo de periodo (absorbe shocks macro: COVID, reformas)
+    - D_{it}      = alcaldesa_final {0,1}: si el municipio i tiene alcaldesa en t
+    - log_pob_{it} = control por tamano de poblacion
+    - epsilon_{it} = error, clusterizado a nivel municipio
+
+  beta es el parametro de interes: el efecto promedio TWFE de tener alcaldesa.
+
+  ADVERTENCIA METODOLOGICA: En presencia de tratamiento escalonado y
+  heterogeneidad en el efecto, beta_TWFE puede ser un promedio ponderado
+  con pesos negativos (Goodman-Bacon, 2021; de Chaisemartin & D'Haultfoeuille, 2020).
+  Por eso complementamos con event study (03) y absorbing-only (R8 en 04_robustness.py).
 
 Outcomes: 5 primarios en escala asinh.
 

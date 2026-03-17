@@ -1,9 +1,40 @@
 """
-extensive_margin.py — Margen extensivo y composición de género.
+extensive_margin.py -- Margen extensivo y composicion de genero.
 
-Extensión exploratoria y pre-especificada:
-  1. any_X_m = 1{X_m_raw > 0}  — acceso mínimo (margen extensivo LPM)
-  2. share_m = y_m_pc / (y_m_pc + y_h_pc) — composición de género
+GUIA PARA EL ASESOR:
+  Los outcomes principales miden CUANTO (saldos, numero de contratos).
+  Pero una pregunta complementaria es SI las mujeres tienen ACCESO
+  a un producto financiero (margen extensivo), y QUE PROPORCION
+  del total municipal corresponde a mujeres (composicion de genero).
+
+  Este script estima dos tipos de variables:
+
+  1. MARGEN EXTENSIVO (any_X_m):
+     Variable binaria = 1 si el municipio tiene al menos 1 contrato/
+     tarjeta/cuenta para mujeres en ese trimestre.
+     Se estima con un Modelo de Probabilidad Lineal (LPM).
+     Interpretacion: "Tener alcaldesa aumenta en beta p.p.
+     la probabilidad de que el municipio tenga al menos un
+     contrato de [producto] para mujeres."
+
+     NOTA: Se usa LPM en vez de logit/probit porque con efectos
+     fijos de municipio (2,471 dummies), logit sufre de parametro
+     incidental y probit no converge. LPM es la practica estandar
+     en paneles con FE (Angrist & Pischke, 2009).
+
+  2. COMPOSICION DE GENERO (share_m):
+     share_m = y_m_pc / (y_m_pc + y_h_pc)
+     Mide la fraccion femenina del producto financiero.
+     Si beta > 0: tener alcaldesa aumenta la proporcion de mujeres.
+     Si beta = 0: el efecto es neutral al genero.
+     Si beta < 0: favorece a hombres (inesperado bajo la hipotesis).
+
+  Estos resultados son complementarios a las tablas principales.
+  Aparecen en la Tabla 7 del paper.
+
+Extension exploratoria y pre-especificada:
+  1. any_X_m = 1{X_m_raw > 0}  -- acceso minimo (margen extensivo LPM)
+  2. share_m = y_m_pc / (y_m_pc + y_h_pc) -- composicion de genero
 
 Se estima TWFE (LPM para binarios, OLS para shares) con FE y cluster SE.
 

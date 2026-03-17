@@ -1,11 +1,32 @@
 """
-03_event_study.py — Event study para diagnóstico de pre-trends.
+03_event_study.py -- Figura 1: Event study para diagnostico de pre-trends.
 
-Construye dummies de leads (K=4) y lags (L=8) con bins extremos,
-referencia k = -1.  Excluye always-treated (sin pre-período).
+GUIA PARA EL ASESOR:
+  El event study es la prueba clave para validar el supuesto de identificacion
+  del diseno DiD: tendencias paralelas. Si los coeficientes pre-tratamiento
+  son estadisticamente indistinguibles de cero, los grupos eran comparables
+  ANTES del tratamiento.
 
-Ecuación:
-  Y_{it} = α_i + γ_t + Σ_{k≠-1} δ_k · 1{event_time = k} + X'β + ε_{it}
+  Que estima:
+    Y_{it} = alpha_i + gamma_t + SUM_{k != -1} delta_k * 1{event_time = k} + X'beta + epsilon_{it}
+
+  donde event_time = t - primer_trimestre_tratamiento.
+  El periodo k = -1 es la referencia (normalizado a 0).
+
+  Estructura temporal:
+    - k <= -4: bin extremo (acumula todos los leads lejanos)
+    - k = -3, -2: pre-tratamiento
+    - k = -1: referencia (coeficiente = 0 por construccion)
+    - k = 0: onset del tratamiento
+    - k = 1, ..., 7: post-tratamiento
+    - k >= 8: bin extremo (acumula todos los lags lejanos)
+
+  Diagnostico principal: test chi-cuadrado conjunto de que todos los
+  coeficientes pre-tratamiento (k <= -4, -3, -2) son conjuntamente cero.
+  Si p > 0.10, no se rechaza la hipotesis de tendencias paralelas.
+
+  NOTA: Se excluyen los always-treated (no tienen pre-periodo).
+  Los never-treated actuan como grupo de control (dummies = 0 para ellos).
 
 Outputs:
   outputs/paper/figura_1_event_study.pdf

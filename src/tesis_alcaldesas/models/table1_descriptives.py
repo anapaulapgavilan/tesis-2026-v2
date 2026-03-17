@@ -1,8 +1,21 @@
 """
-01_table1_descriptives.py — Tabla 1: Estadísticos descriptivos pre-tratamiento.
+01_table1_descriptives.py -- Tabla 1: Estadisticos descriptivos pre-tratamiento.
 
-Compara promedios en el periodo pre-tratamiento (o todo el panel para never-treated)
-por grupo: never-treated, switchers, always-treated.
+GUIA PARA EL ASESOR:
+  Este script genera la Tabla 1 del paper. Compara medias y desviaciones
+  estandar de las variables clave entre tres grupos de municipios:
+
+    1. Never-treated (1,476 mun): nunca tuvieron alcaldesa. Todos los periodos.
+    2. Switchers pre-periodo (894 mun): eventualmente tuvieron alcaldesa;
+       solo se incluyen observaciones ANTES del primer tratamiento.
+    3. Always-treated (101 mun): siempre tuvieron alcaldesa. Todos los periodos.
+
+  La comparacion entre never-treated y switchers (pre) es clave para
+  evaluar las condiciones iniciales del diseno DiD. Si los promedios
+  son similares, los grupos son comparables antes del tratamiento.
+
+  Variables descritas: tratamiento (D), poblacion (log_pob, pob_adulta_m),
+  y los 5 outcomes primarios en escala asinh y per capita.
 
 Outputs:
   outputs/paper/tabla_1_descriptiva.csv

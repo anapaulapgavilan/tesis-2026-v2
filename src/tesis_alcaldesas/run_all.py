@@ -1,16 +1,45 @@
 """
-run_all.py — Entrypoint que ejecuta el pipeline completo de modelado.
+run_all.py -- Entrypoint que ejecuta el pipeline completo de modelado.
 
-Orden de ejecución:
+GUIA PARA EL ASESOR:
+  Este script es el orquestador principal. Ejecuta los 9 modulos
+  de analisis en el orden correcto, asegurando que los outputs de
+  cada paso esten disponibles para los siguientes.
+
+  Flujo completo (tambien reproducible con 'make all'):
+
+    [Datos]  extract_panel --> build_features --> analytical_panel_features.parquet
+    [Tabla 1]  table1_descriptives  --> Estadisticas descriptivas por grupo
+    [Tabla 2]  twfe                 --> Coeficiente DiD principal (beta)
+    [Fig.  1]  event_study          --> Pre-trends + dinamica del efecto
+    [Tabla 3]  robustness           --> 8 pruebas de robustez (R1-R8)
+    [Tabla 4]  heterogeneity        --> Efectos por tipo poblacion y tamano
+    [Tabla 5]  mdes_power           --> Tamano minimo detectable (MDES)
+    [Fig.  2]  event_study_sens     --> Sensibilidad del bin extremo
+    [Tabla 2b] sample_policy        --> Main vs Full sample
+    [Tabla 7]  extensive_margin     --> Margen extensivo y composicion
+
+  Cada modulo imprime un header y un OK al terminar. Si alguno
+  falla, el script se detiene y reporta el error.
+
+  NOTA SOBRE REPRODUCIBILIDAD:
+  El unico prerequisito es que el archivo
+  data/processed/analytical_panel_features.parquet exista.
+  Este se genera corriendo los dos scripts de datos:
+    python -m tesis_alcaldesas.data.extract_panel
+    python -m tesis_alcaldesas.data.build_features
+  O bien, 'make data' en la raiz del proyecto.
+
+Orden de ejecucion:
   1. Tabla 1: descriptivos
   2. Tabla 2: TWFE baseline
   3. Figura 1 + pre-trends: event study
   4. Tabla 3: robustez
   5. Tabla 4: heterogeneidad
-  6. Tabla 5: MDES / poder estadístico
+  6. Tabla 5: MDES / poder estadistico
   7. Figura 2: sensibilidad event study
   8. Sample policy (main vs full)
-  9. Tabla 6: extensión (extensivo + composición)
+  9. Tabla 6: extension (extensivo + composicion)
 
 Uso:
   python -m tesis_alcaldesas.run_all

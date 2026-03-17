@@ -1,12 +1,37 @@
 """
-mdes_power.py — Minimum Detectable Effect Size (MDES) y análisis de poder.
+mdes_power.py -- Minimum Detectable Effect Size (MDES) y analisis de poder.
 
-Convierte resultados nulos en hallazgos informativos:
-  "Con estos datos, descartamos efectos mayores a X% en …"
+GUIA PARA EL ASESOR:
+  Cuando el coeficiente TWFE no es significativo, la pregunta natural
+  del lector es: "No encontraste efecto porque no existe, o porque
+  tu muestra es muy pequena?"
+
+  Este script responde esa pregunta convirtiendo resultados nulos en
+  hallazgos informativos:
+    "Con 95% de confianza y 80% de poder,
+     descartamos efectos mayores a X% en [outcome]."
+
+  Formula MDES:
+    MDES = (z_{alpha/2} + z_{beta}) x SE(beta_hat)
+
+  Donde:
+    - z_{alpha/2} = 1.96 (para alpha = 0.05) o 1.645 (alpha = 0.10)
+    - z_{beta} = 0.842 (para poder = 80%)
+    - SE viene del coeficiente TWFE baseline (tabla_2_twfe_raw.csv)
+
+  Traduccion a niveles:
+    Como los outcomes estan en asinh(y_pc), el MDES en asinh se
+    convierte a porcentaje aproximado usando:
+      %cambio approx (exp(MDES) - 1) x 100
+    (ver Bellemare & Wichman, 2020).
+
+  Si el MDES es pequeno (e.g., podemos descartar efectos > 3%),
+  el resultado nulo es sustantivamente informativo.
+  Si el MDES es grande, necesitariamos mas datos para concluir.
 
 Para cada outcome primario:
   1. Obtener SE del coeficiente TWFE baseline (tabla_2_twfe_raw.csv)
-  2. Calcular MDES = (z_alpha/2 + z_beta) × SE
+  2. Calcular MDES = (z_alpha/2 + z_beta) x SE
   3. Traducir asinh --> % aproximado en niveles
   4. Reportar al 80% poder (alpha 0.05 y 0.10)
 
