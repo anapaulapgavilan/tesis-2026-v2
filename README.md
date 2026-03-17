@@ -1,6 +1,6 @@
 # Alcaldesas e Inclusión Financiera de las Mujeres en México
 
-**Tesis de grado** · Ana Paula Pérez Gavilán  
+**Tesis** · Ana Paula Pérez Gavilán  
 Repositorio de código y datos para la estimación del efecto causal de la representación política femenina municipal sobre la inclusión financiera de las mujeres en México.
 
 ---
