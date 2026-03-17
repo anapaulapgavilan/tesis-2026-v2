@@ -1,0 +1,9 @@
+key,value
+version,v2.0
+source_csv,panel_unificado_v2.csv
+n_rows,64126
+n_trims,26
+n_muns,2471
+trim_range,119 - 424
+columns_dropped,"saldocont_*, saldoprom_*, ncont_tradic_*, all _pm, genero"
+schema_notes,"Schema: _m, _h (raw) + _t (computed _m+_h) + alcaldesa_final + panel_balanced"

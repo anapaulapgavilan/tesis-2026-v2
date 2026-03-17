@@ -1,0 +1,13 @@
+categoria,variable(s),transformacion,razon,prioridad
+Normalización,"ncont_*, numtar_*, numcontcred_*","Per cápita: dividir entre pob_adulta_m (mujeres) o pob_adulta_h (hombres) × 10,000",La inclusión financiera en niveles está altamente correlacionada con población (r=0.67–0.70). Comparar municipios de distinto tamaño requiere normalización.,CRÍTICA
+Normalización,saldocont_*,"Per cápita: dividir entre pob_adulta_* × 10,000","Saldos monetarios escalan con población. Alternativamente, saldo promedio (saldoprom_*) ya está normalizado pero tiene NULLs estructurales.",CRÍTICA
+Escala,"pob, pob_adulta, pob_adulta_m, pob_adulta_h",log(x) para controlar en regresiones; dejar en niveles para per cápita,Distribución log-normal típica de población. CV = 5.74 indica cola fuerte a la derecha.,Alta
+Escala,outcomes per cápita (todos),"Evaluar log(1+x) si distribución es muy asimétrica; alternativamente, asinh(x) que acepta ceros",Estabiliza varianza y facilita interpretación en coeficientes como semi-elasticidades.,Media
+Outliers,outcomes per cápita,Winsorizar al p1–p99 como análisis de robustez,Los outcomes muestran alta dispersión (CV > 5). Winsorización controla influencia de extremos sin perder observaciones.,Alta (robustez)
+Imputación,tipo_pob (2 NULLs),"Asignar categoría basándose en rango de población del municipio, o excluir las 2 obs problemáticas",Solo 2 observaciones: impacto mínimo pero evita perder filas en regresiones con FE.,Baja
+Imputación,saldoprom_* (NULLs estructurales),"NO imputar. Filtrar con flag_undef_saldoprom_* = 0 para margen intensivo. Para margen extensivo, usar ncont_* > 0 como binaria.","Los NULLs son el resultado correcto (÷0), no datos faltantes.",CRÍTICA
+Feature engineering,brecha_genero_* (nuevas),Crear ratio = outcome_m / outcome_h o diferencia = outcome_m − outcome_h,La pregunta es sobre inclusión financiera DE MUJERES. La brecha M/H captura directamente la disparidad.,Alta
+Feature engineering,alcaldesa_acumulado (nueva),Variable 'dosis': nº trimestres acumulados con alcaldesa hasta t,Permite evaluar si el efecto se acumula con el tiempo de exposición.,Media
+Feature engineering,ever_alcaldesa (nueva),1 si el municipio tiene alcaldesa en cualquier trimestre del panel,Clasifica municipios para análisis de balance y heterogeneidad.,Alta
+Estandarización IDs,"cve_mun, cve_ent, cve_mun3, cvegeo_mun","Usar cvegeo_mun (5 dígitos, texto) como ID canónico para merges con INEGI/CONAPO/etc.",Formato estándar INEGI de 5 dígitos evita errores de zero-padding.,Alta
+Limpieza,"hist_state_available, missing_quarters_alcaldesa, ok_panel_completo_final",EXCLUIR — son constantes (std = 0),"No aportan variación: hist_state_available = 1, missing_quarters = 0, ok_panel_completo_final = 1 para toda la muestra.",CRÍTICA

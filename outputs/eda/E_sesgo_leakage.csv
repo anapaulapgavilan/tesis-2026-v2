@@ -1,0 +1,55 @@
+variable,tipo_riesgo,razon,accion
+alcaldesa_final_f1,leakage_temporal,Adelanto (forward) de tratamiento — usa información de t+k. NO usar como control; solo para test de pre-trends (event study).,EXCLUIR de regresiones causales como regresor
+alcaldesa_final_f2,leakage_temporal,Adelanto (forward) de tratamiento — usa información de t+k. NO usar como control; solo para test de pre-trends (event study).,EXCLUIR de regresiones causales como regresor
+alcaldesa_final_f3,leakage_temporal,Adelanto (forward) de tratamiento — usa información de t+k. NO usar como control; solo para test de pre-trends (event study).,EXCLUIR de regresiones causales como regresor
+alcaldesa_transition,endogeneidad,Transición de gobierno puede estar correlacionada con outcomes. Contemporánea al tratamiento.,"Usar variantes *_excl_trans como robustez, no como control principal"
+alcaldesa_transition_gender,endogeneidad,Transición de gobierno puede estar correlacionada con outcomes. Contemporánea al tratamiento.,"Usar variantes *_excl_trans como robustez, no como control principal"
+hist_mun_available,artefacto_construccion,"Variable de calidad/proceso de construcción, no confusor causal.",NO usar como control (no existía antes del tratamiento)
+hist_state_available,artefacto_construccion,"Variable de calidad/proceso de construcción, no confusor causal.",NO usar como control (no existía antes del tratamiento)
+ok_panel_completo,artefacto_construccion,"Variable de calidad/proceso de construcción, no confusor causal.",NO usar como control (no existía antes del tratamiento)
+ok_panel_completo_final,artefacto_construccion,"Variable de calidad/proceso de construcción, no confusor causal.",NO usar como control (no existía antes del tratamiento)
+missing_quarters_alcaldesa,artefacto_construccion,"Variable de calidad/proceso de construcción, no confusor causal.",NO usar como control (no existía antes del tratamiento)
+filled_by_manual,artefacto_construccion,"Variable de calidad/proceso de construcción, no confusor causal.",NO usar como control (no existía antes del tratamiento)
+quarters_in_base,artefacto_construccion,"Variable de calidad/proceso de construcción, no confusor causal.",NO usar como control (no existía antes del tratamiento)
+hist_state_available,constante,Varianza = 0 → no aporta información.,EXCLUIR de regresiones
+missing_quarters_alcaldesa,constante,Varianza = 0 → no aporta información.,EXCLUIR de regresiones
+ok_panel_completo_final,constante,Varianza = 0 → no aporta información.,EXCLUIR de regresiones
+flag_undef_saldoprom_ahorro_m,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_ahorro_h,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_ahorro_pm,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_ahorro_t,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_plazo_m,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_plazo_h,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_plazo_pm,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_plazo_t,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_n1_m,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_n1_h,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_n1_pm,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_n1_t,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_n2_m,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_n2_h,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_n2_pm,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_n2_t,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_n3_m,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_n3_h,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_n3_pm,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_n3_t,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_tradic_m,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_tradic_h,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_tradic_pm,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_tradic_t,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_total_m,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_total_h,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_total_pm,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+flag_undef_saldoprom_total_t,flag_proceso,"Flag de missingness estructural (÷0). Útil para filtrar, no como control.","Usar solo para filtrar muestras, no como regresor"
+alcaldesa_l1,lag_tratamiento,Rezago del tratamiento — válido para event study / efectos dinámicos. No usar como control independiente.,Usar SOLO en especificación de event study
+alcaldesa_l2,lag_tratamiento,Rezago del tratamiento — válido para event study / efectos dinámicos. No usar como control independiente.,Usar SOLO en especificación de event study
+alcaldesa_end_l1,lag_tratamiento,Rezago del tratamiento — válido para event study / efectos dinámicos. No usar como control independiente.,Usar SOLO en especificación de event study
+alcaldesa_end_l2,lag_tratamiento,Rezago del tratamiento — válido para event study / efectos dinámicos. No usar como control independiente.,Usar SOLO en especificación de event study
+alcaldesa_excl_trans_l1,lag_tratamiento,Rezago del tratamiento — válido para event study / efectos dinámicos. No usar como control independiente.,Usar SOLO en especificación de event study
+alcaldesa_excl_trans_l2,lag_tratamiento,Rezago del tratamiento — válido para event study / efectos dinámicos. No usar como control independiente.,Usar SOLO en especificación de event study
+alcaldesa_end_excl_trans_l1,lag_tratamiento,Rezago del tratamiento — válido para event study / efectos dinámicos. No usar como control independiente.,Usar SOLO en especificación de event study
+alcaldesa_end_excl_trans_l2,lag_tratamiento,Rezago del tratamiento — válido para event study / efectos dinámicos. No usar como control independiente.,Usar SOLO en especificación de event study
+alcaldesa_final_l1,lag_tratamiento,Rezago del tratamiento — válido para event study / efectos dinámicos. No usar como control independiente.,Usar SOLO en especificación de event study
+alcaldesa_final_l2,lag_tratamiento,Rezago del tratamiento — válido para event study / efectos dinámicos. No usar como control independiente.,Usar SOLO en especificación de event study
+alcaldesa_final_l3,lag_tratamiento,Rezago del tratamiento — válido para event study / efectos dinámicos. No usar como control independiente.,Usar SOLO en especificación de event study

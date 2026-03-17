@@ -1,0 +1,24 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Heterogeneidad del efecto TWFE por tipo de población y tamaño municipal}
+\label{tab:heterogeneity}
+\begin{tabular}{lcccccc}
+\toprule
+ & Group & Coef & SE & p-valor & N & q-value (BH) \\
+Dimension &  &  &  &  &  &  \\
+\midrule
+tipo\_pob & En Transicion & -0.0071 & (0.0351) & 0.8392 & 10,613 & 0.9280 \\
+tipo\_pob & Metropoli & 0.0298** & (0.0131) & 0.0239 & 220 & 0.2147 \\
+tipo\_pob & Rural & -0.1037 & (0.0648) & 0.1094 & 11,288 & 0.4922 \\
+tipo\_pob & Semi-metropoli & -0.0042 & (0.0145) & 0.7744 & 1,223 & 0.9280 \\
+tipo\_pob & Semi-urbano & 0.0026 & (0.0289) & 0.9280 & 12,423 & 0.9280 \\
+tipo\_pob & Urbano & 0.0034 & (0.0131) & 0.7964 & 6,138 & 0.9280 \\
+Tercil población & T1 (pequeño) & -0.0686 & (0.0530) & 0.1956 & 14,008 & 0.5869 \\
+Tercil población & T2 (mediano) & -0.0211 & (0.0315) & 0.5036 & 13,911 & 0.9280 \\
+Tercil población & T3 (grande) & 0.0031 & (0.0139) & 0.8225 & 13,986 & 0.9280 \\
+\bottomrule
+\end{tabular}
+\vspace{2mm}
+\parbox{\textwidth}{\footnotesize \textit{Nota:} Sub-muestras independientes. FE municipio + período, cluster SE municipio. Outcome: asinh(contratos totales mujeres per cápita ×10k). q-value: corrección Benjamini-Hochberg (FDR). *** p<0.01, ** p<0.05, * p<0.10.}
+\end{table}

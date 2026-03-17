@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Minimum Detectable Effect Size (MDES) — 80\% poder, $\alpha = 0.05$}
+\label{tab:mdes}
+\begin{tabular}{lccccc}
+\toprule
+ & $\hat{\beta}_{TWFE}$ & SE & MDES (asinh) & MDES ($\approx$ \%) & N \\
+Outcome &  &  &  &  &  \\
+\midrule
+Contratos totales & 0.0070 & 0.0215 & 0.0604 & 6.2\% & 41,905 \\
+Tarjetas débito & -0.0137 & 0.0213 & 0.0596 & 6.1\% & 41,905 \\
+Tarjetas crédito & -0.0017 & 0.0172 & 0.0482 & 4.9\% & 41,905 \\
+Créditos hipotecarios & 0.0180 & 0.0214 & 0.0599 & 6.2\% & 41,905 \\
+Saldo total & 0.0042 & 0.0490 & 0.1373 & 14.7\% & 41,905 \\
+\bottomrule
+\end{tabular}
+\vspace{2mm}
+\parbox{\textwidth}{\footnotesize \textit{Nota:} MDES = $(z_{\alpha/2} + z_{\beta}) \times SE$. SE del coeficiente TWFE baseline (Tabla 2). La columna \% es la aproximación $(\exp(|\text{MDES}|) - 1) \times 100$.}
+\end{table}

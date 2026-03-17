@@ -1,0 +1,35 @@
+Panel Checks — 02_build_features.py
+==================================================
+
+Archivo: /Users/anapaulaperezgavilan/Documents/tesis-2026-v2/data/processed/analytical_panel.parquet
+Shape: 41,905 filas × 61 columnas
+
+PK (cve_mun, periodo_trimestre): ✓ única
+
+Municipios: 2,471
+Periodos: 17
+N esperado (balanceado): 42,007
+N actual: 41,905
+Celdas faltantes: 102 (0.24%)
+Balanceado: ✗ NO
+
+Municipios con panel incompleto (8):
+  cve_mun=2007: 1/17 periodos (16 faltantes)
+  cve_mun=4013: 1/17 periodos (16 faltantes)
+  cve_mun=2006: 4/17 periodos (13 faltantes)
+  cve_mun=4012: 4/17 periodos (13 faltantes)
+  cve_mun=7125: 4/17 periodos (13 faltantes)
+  cve_mun=17036: 4/17 periodos (13 faltantes)
+  cve_mun=17034: 8/17 periodos (9 faltantes)
+  cve_mun=17035: 8/17 periodos (9 faltantes)
+
+Decisión de muestra:
+  • Se conservan TODOS los municipios (panel no balanceado).
+  • Se añade flag `flag_incomplete_panel` para sensibilidad.
+  • Robustez: re-estimar excluyendo municipios incompletos.
+
+Distribución tratamiento (alcaldesa_final):
+  0: 77.73%
+  1: 22.27%
+
+Periodos: 2018Q3 – 2022Q3

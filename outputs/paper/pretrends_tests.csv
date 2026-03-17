@@ -1,0 +1,6 @@
+outcome,label,chi2_stat,chi2_pval,n_restrictions,pass_10pct,nobs
+ncont_total_m,Contratos totales,5.491308728546975,0.13915937677208867,3,Yes,40201
+numtar_deb_m,Tarjetas débito,3.800097782540755,0.28387475721500643,3,Yes,40201
+numtar_cred_m,Tarjetas crédito,6.670528884006596,0.08317449890134365,3,No,40201
+numcontcred_hip_m,Créditos hipotecarios,0.7538430645470588,0.8604722374032132,3,Yes,40201
+saldocont_total_m,Saldo total,3.5147849856158775,0.3188496144015469,3,Yes,40201

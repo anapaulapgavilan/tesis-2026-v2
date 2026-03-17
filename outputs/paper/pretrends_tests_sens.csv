@@ -1,0 +1,9 @@
+outcome,label,variant,k_leads,l_lags,excl_cohort,chi2_stat,chi2_pval,n_restrictions,pass_10pct,nobs
+numtar_cred_m,Tarjetas crédito,"Baseline (K=4, L=8)",4,8,,6.670528884006596,0.08317449890134365,3,No,40201
+numtar_cred_m,Tarjetas crédito,"A: K=3, L=8 (bin k≤-3)",3,8,,5.111011671509626,0.07765294249632415,2,No,40201
+numtar_cred_m,Tarjetas crédito,"B: K=6, L=8 (bin k≤-6)",6,8,,7.119496322882852,0.2119038394402979,5,Yes,40201
+numtar_cred_m,Tarjetas crédito,C: Excl. cohorte g=0,4,8,0,7.154693720061489,0.06712723685317523,3,No,35203
+ncont_total_m,Contratos totales,"Baseline (K=4, L=8)",4,8,,5.491308728546975,0.13915937677208867,3,Yes,40201
+ncont_total_m,Contratos totales,"A: K=3, L=8 (bin k≤-3)",3,8,,4.849991426554347,0.08847849832407284,2,No,40201
+ncont_total_m,Contratos totales,"B: K=6, L=8 (bin k≤-6)",6,8,,7.17044839890311,0.20826935292400506,5,Yes,40201
+ncont_total_m,Contratos totales,C: Excl. cohorte g=0,4,8,0,5.623369793669233,0.13144314302553362,3,Yes,35203

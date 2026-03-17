@@ -1,0 +1,20 @@
+============================================================
+SENSIBILIDAD A LA MUESTRA: Main (balanceado) vs Full
+============================================================
+
+Outcome                       Full β     Main β   Full p   Main p       Δβ  Δ% relativo
+--------------------------------------------------------------------------------
+Contratos totales             0.0070     0.0069   0.7466   0.7474  -0.0000         0.1%
+Tarjetas débito              -0.0137    -0.0137   0.5210   0.5213   0.0000         0.0%
+Tarjetas crédito             -0.0017    -0.0017   0.9193   0.9196   0.0000         0.0%
+Créditos hipotecarios         0.0180     0.0180   0.4002   0.3999   0.0000         0.1%
+Saldo total                   0.0042     0.0042   0.9312   0.9321  -0.0001         0.1%
+
+--------------------------------------------------------------------------------
+Full sample: 41,905 obs, 2,471 municipios
+Main sample: 41,871 obs, 2,463 municipios
+Municipios eliminados: 8
+
+Interpretación:
+  Si Δβ es pequeño relativo a SE → la exclusión es inocua.
+  Ambas muestras producen la misma conclusión cualitativa.

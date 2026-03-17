@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Data (archivos grandes — no trackear CSVs crudos >50 MB)
+data/processed/*.parquet
+data/*.xlsm
+data/inclusion_financiera.csv
+data/inclusion_financiera_clean.csv
+data/inclusion_financiera_v2.csv
+data/processed/analytical_panel_features.csv
+data/processed/base_inclusion_financiera_v2.csv
+
+# Docs binarios grandes
+docs/*.xlsm
+docs/*.xlsx
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Env
+.env
+.venv/
+venv/
+
+# Notebooks checkpoints
+.ipynb_checkpoints/

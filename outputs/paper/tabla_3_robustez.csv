@@ -1,0 +1,10 @@
+Test,Outcome,Treatment,Coef,SE,N,Nota
+Baseline (asinh),Contratos totales,alcaldesa\_final,0.0070,(0.0215),"41,905","FE mun + per, cluster mun"
+R1: log(1+y),Contratos totales,alcaldesa\_final,0.0054,(0.0204),"41,905",Escala alternativa
+R2: Winsor p1-p99 + asinh,Contratos totales,alcaldesa\_final,0.0081,(0.0214),"41,905","Recorte p1-p99, luego asinh"
+R3: Excluir transiciones,Contratos totales,alcaldesa\_excl\_trans,0.0015,(0.0235),"38,303",NaN en trimestres de transición → se excluyen
+R4: Placebo temporal (+4 trim),Contratos totales,placebo\_tto\_f4,-0.0190,(0.0203),"32,027",Efecto esperado ≈ 0 si no hay anticipación
+R5: Placebo género (hombres),Contratos totales (H),alcaldesa\_final,-0.0013,(0.0252),"41,905","Si β≈0, efecto es específico a mujeres. Si β≠0, podría reflejar shock general."
+R6: Winsor p1-p99 (nivel),Contratos totales,alcaldesa\_final,-71.9625*,(41.4760),"41,905",_pc_w sin transformación funcional
+R7: Per cápita nivel,Contratos totales,alcaldesa\_final,-114.3771*,(60.6801),"41,905",_pc sin ninguna transformación
+R8: Absorbing-only (0→1 perm.),Contratos totales,alcaldesa\_final,0.1303***,(0.0382),"31,956",Solo 409 switchers absorbentes + never-treated

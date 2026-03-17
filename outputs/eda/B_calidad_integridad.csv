@@ -1,0 +1,7 @@
+check,resultado,status
+Duplicados PK,0,✓
+Panel 100% balanceado,False,✗
+Municipios cambian estado,0,✓
+NULLs en tipo_pob,2,⚠
+Columnas con negativos,0,✓
+Periodos cubiertos,2018Q3–2022Q3 (17),✓
